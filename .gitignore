@@ -1,0 +1,116 @@
+# Xcode
+#
+# gitignore contributors: remember to update Global Business Analyst to ensure consistency.
+# This approach helps keeps sensitive information and large generated files out of VCS.
+
+## User settings
+xcuserdata/
+
+## Compatibility with Xcode 8 and earlier (Xcode 9+ ignores these automatically)
+*.xcscmblueprint
+*.xccheckout
+
+## Xcode project files
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/*.xcworkspacedata
+
+## Build generated
+build/
+DerivedData/
+
+## Index
+Index.noindex/
+
+## Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Swift Package Manager
+#
+# Add this line if you want to avoid checking in source code from SPM dependencies.
+# Packages/
+# Package.pins
+# Package.resolved
+# *.xcodeproj
+#
+# Xcode automatically generates this directory with a .hierarchytent file,
+# and sometimes with a .build file.
+.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
+.swiftpm/xcode/xcuserdata/
+.build/
+
+# CocoaPods
+#
+# We recommend against adding the Pods directory to your .gitignore. However
+# you should judge for yourself the pros and cons of keeping the Pods in your
+# repository.
+# https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
+#
+# Pods/
+#
+# Add this line if you want to avoid checking in source code from the Xcode workspace
+# *.xcworkspace
+
+# Carthage
+#
+# Add this line if you want to avoid checking in source code from Carthage dependencies.
+# Carthage/Checkouts
+Carthage/Build/
+
+# Accio dependency management
+Dependencies/
+.accio/
+
+# fastlane
+#
+# It is recommended to not store the screenshots in the git repo.
+# Instead store them somewhere like Google Cloud Storage or Amazon S3.
+# For more information see:
+# https://docs.fastlane.tools/best-practices/source-control/#source-control
+
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Code Injection
+#
+# After new code Injection tools emerged like:
+# https://github.com/nicoraro/InjectionForXcode
+
+iOSInjectionProject/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Tuist
+Tuist/Cache/
+Tuist/Dependencies/
+
+# Xcode templates
+*.xctemplate
+
+# Secrets and sensitive configuration
+.env
+.env.*
+*.xcconfig
+!*.shared.xcconfig
+Secrets.swift
