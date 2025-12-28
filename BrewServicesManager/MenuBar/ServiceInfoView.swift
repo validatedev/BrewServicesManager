@@ -39,7 +39,11 @@ struct ServiceInfoView: View {
                     }
                     
                     ServiceInfoStatusSectionView(info: info)
-                    
+
+                    if let ports = info.detectedPorts, !ports.isEmpty {
+                        ServiceInfoPortsSectionView(ports: ports)
+                    }
+
                     ServiceInfoFilesSectionView(info: info)
                     
                     if info.command != nil || info.workingDir != nil || info.rootDir != nil {
@@ -155,7 +159,7 @@ struct ServiceInfoExecutionSectionView: View {
 
 struct ServiceInfoScheduleSectionView: View {
     let info: BrewServiceInfoEntry
-    
+
     var body: some View {
         PanelSectionCardView(title: "Schedule") {
             if let schedulable = info.schedulable {
@@ -168,6 +172,29 @@ struct ServiceInfoScheduleSectionView: View {
 
             if let cron = info.cron {
                 InfoKeyValueRowView(label: "Cron", value: cron)
+            }
+        }
+    }
+}
+
+struct ServiceInfoPortsSectionView: View {
+    let ports: [ServicePort]
+
+    var body: some View {
+        PanelSectionCardView(title: "Listening Ports") {
+            ForEach(ports) { port in
+                HStack(alignment: .firstTextBaseline, spacing: LayoutConstants.compactSpacing) {
+                    Text(port.portProtocol.rawValue)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: true, vertical: false)
+
+                    Text(String(port.port))
+                        .font(.subheadline)
+                        .textSelection(.enabled)
+
+                    Spacer(minLength: .zero)
+                }
             }
         }
     }

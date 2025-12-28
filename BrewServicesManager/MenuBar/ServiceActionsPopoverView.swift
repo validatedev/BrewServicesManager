@@ -4,6 +4,7 @@ import SwiftUI
 
 struct ServiceActionsPopoverView: View {
     @Environment(ServicesStore.self) private var store
+    @Environment(ServiceLinksStore.self) private var linksStore
 
     let service: BrewServiceListEntry
     @Binding var isPresented: Bool
@@ -11,6 +12,7 @@ struct ServiceActionsPopoverView: View {
     let onAction: (ServiceAction) -> Void
     let onInfo: () -> Void
     let onStopWithOptions: () -> Void
+    let onManageLinks: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: .zero) {
@@ -69,6 +71,19 @@ struct ServiceActionsPopoverView: View {
                             .lineLimit(2)
                     }
                 }
+
+                // Port summary
+                if let ports = servicePortsForDisplay, !ports.isEmpty {
+                    HStack(spacing: LayoutConstants.tightSpacing) {
+                        Image(systemName: "network")
+                            .foregroundStyle(.secondary)
+                            .frame(width: LayoutConstants.menuRowIconWidth)
+
+                        Text(portsDescription(ports))
+                            .foregroundStyle(.secondary)
+                    }
+                    .font(.caption2)
+                }
             }
             .padding(.horizontal)
             .padding(.vertical, LayoutConstants.compactPadding)
@@ -107,6 +122,30 @@ struct ServiceActionsPopoverView: View {
                 Divider()
                     .padding(.vertical, LayoutConstants.compactPadding)
 
+                // Links section
+                if !serviceLinks.isEmpty || canSuggestLinks {
+                    ForEach(serviceLinks) { link in
+                        popoverButton(
+                            link.displayLabel,
+                            icon: "link.circle",
+                            color: .blue
+                        ) {
+                            AppKitBridge.openURL(link.url)
+                        }
+                    }
+
+                    popoverButton(
+                        "Manage Links…",
+                        icon: "link.badge.plus",
+                        color: .primary
+                    ) {
+                        onManageLinks()
+                    }
+
+                    Divider()
+                        .padding(.vertical, LayoutConstants.compactPadding)
+                }
+
                 popoverButton("View Info", icon: "info.circle", color: .primary) {
                     onInfo()
                 }
@@ -144,6 +183,30 @@ struct ServiceActionsPopoverView: View {
         case .unknown:
             "Unknown"
         }
+    }
+
+    private var servicePortsForDisplay: [ServicePort]? {
+        // Get ports from the selected service info if it matches this service
+        guard let selectedInfo = store.selectedServiceInfo,
+              selectedInfo.name == service.name else {
+            return nil
+        }
+        return selectedInfo.detectedPorts
+    }
+
+    private func portsDescription(_ ports: [ServicePort]) -> String {
+        let portStrings = ports.prefix(3).map { "\($0.port)" }
+        let joined = portStrings.joined(separator: ", ")
+        return ports.count > 3 ? "\(joined) +\(ports.count - 3)" : joined
+    }
+
+    private var serviceLinks: [ServiceLink] {
+        linksStore.links(for: service.name)
+    }
+
+    private var canSuggestLinks: Bool {
+        // Show if service is running - we can detect ports
+        service.status == .started
     }
 
     // MARK: - Popover Button Helper

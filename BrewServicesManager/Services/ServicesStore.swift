@@ -78,7 +78,10 @@ final class ServicesStore {
     
     /// The client for executing brew commands.
     private let client: BrewServicesClientProtocol
-    
+
+    /// The port detector for finding listening ports.
+    private let portDetector = PortDetector()
+
     init(client: BrewServicesClientProtocol = BrewServicesClient()) {
         self.client = client
     }
@@ -454,7 +457,7 @@ final class ServicesStore {
         debugMode: Bool = false
     ) async {
         logger.info("Fetching info for \(serviceName)")
-        
+
         do {
             selectedServiceInfo = try await client.getServiceInfo(serviceName, domain: domain, sudoServiceUser: sudoServiceUser, debugMode: debugMode)
             logger.info("Fetched info for \(serviceName)")
@@ -473,6 +476,31 @@ final class ServicesStore {
             nonFatalError = .brewFailed(exitCode: -1, stderr: error.localizedDescription)
             lastDiagnostics = ServiceOperation.diagnostics(for: .brewFailed(exitCode: -1, stderr: error.localizedDescription))
             logger.error("Fetch info failed: \(error.localizedDescription)")
+        }
+    }
+
+    /// Fetches detailed info for a service including detected ports.
+    func fetchServiceInfoWithPorts(
+        _ serviceName: String,
+        domain: ServiceDomain = .user,
+        sudoServiceUser: String? = nil,
+        debugMode: Bool = false
+    ) async {
+        await fetchServiceInfo(serviceName, domain: domain, sudoServiceUser: sudoServiceUser, debugMode: debugMode)
+
+        // Detect ports if service has a PID
+        if let info = selectedServiceInfo, let pid = info.pid {
+            do {
+                let ports = try await portDetector.detectPorts(for: pid)
+                // Update the selectedServiceInfo with detected ports
+                var updatedInfo = info
+                updatedInfo.detectedPorts = ports
+                selectedServiceInfo = updatedInfo
+                logger.info("Detected \(ports.count) ports for \(serviceName)")
+            } catch {
+                logger.debug("Port detection failed: \(error.localizedDescription)")
+                // Don't fail the whole operation - just log and continue
+            }
         }
     }
     

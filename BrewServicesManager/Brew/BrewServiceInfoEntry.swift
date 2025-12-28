@@ -89,4 +89,9 @@ struct BrewServiceInfoEntry: Codable, Identifiable, Hashable, Sendable {
         guard let errorLogPath else { return nil }
         return URL(filePath: errorLogPath)
     }
+
+    // MARK: - Runtime State (not from JSON)
+
+    /// Detected listening ports (populated at runtime)
+    var detectedPorts: [ServicePort]?
 }

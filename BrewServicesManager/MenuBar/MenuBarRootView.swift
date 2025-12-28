@@ -10,11 +10,12 @@ import SwiftUI
 struct MenuBarRootView: View {
     @Environment(ServicesStore.self) private var store
     @Environment(AppSettings.self) private var settings
-    
+
     @State private var pendingGlobalAction: GlobalActionType?
     @State private var serviceToStop: BrewServiceListEntry?
     @State private var showingSettings = false
     @State private var showingServiceInfo: BrewServiceInfoEntry?
+    @State private var managingLinksFor: (service: String, ports: [ServicePort])?
     
     var body: some View {
         let menuContentWidth: CGFloat = if serviceToStop != nil {
@@ -22,6 +23,8 @@ struct MenuBarRootView: View {
         } else if showingSettings {
             LayoutConstants.settingsMenuWidth
         } else if showingServiceInfo != nil {
+            LayoutConstants.serviceInfoMenuWidth
+        } else if managingLinksFor != nil {
             LayoutConstants.serviceInfoMenuWidth
         } else {
             LayoutConstants.mainMenuWidth
@@ -37,7 +40,7 @@ struct MenuBarRootView: View {
                 },
                 onServiceInfo: { service in
                     Task {
-                        await store.fetchServiceInfo(
+                        await store.fetchServiceInfoWithPorts(
                             service.name,
                             domain: settings.selectedDomain,
                             sudoServiceUser: settings.validatedSudoServiceUser,
@@ -53,11 +56,32 @@ struct MenuBarRootView: View {
                 onStopWithOptions: { service in
                     serviceToStop = service
                 },
+                onManageLinks: { service in
+                    Task {
+                        var ports: [ServicePort] = []
+
+                        if let info = store.selectedServiceInfo, info.name == service.name {
+                            ports = info.detectedPorts ?? []
+                        } else {
+                            await store.fetchServiceInfoWithPorts(
+                                service.name,
+                                domain: settings.selectedDomain,
+                                sudoServiceUser: settings.validatedSudoServiceUser,
+                                debugMode: settings.debugMode
+                            )
+                            ports = store.selectedServiceInfo?.detectedPorts ?? []
+                        }
+
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            managingLinksFor = (service.name, ports)
+                        }
+                    }
+                },
                 onGlobalAction: { action in
                     pendingGlobalAction = action
                 }
             )
-            .opacity(showingSettings || showingServiceInfo != nil ? 0 : 1)
+            .opacity(showingSettings || showingServiceInfo != nil || managingLinksFor != nil ? 0 : 1)
             
             // Settings overlay
             if showingSettings {
@@ -76,6 +100,20 @@ struct MenuBarRootView: View {
                         showingServiceInfo = nil
                     }
                 }
+                .transition(.move(edge: .trailing))
+            }
+
+            // Service Links Management overlay
+            if let managingLinks = managingLinksFor {
+                ServiceLinksManagementView(
+                    serviceName: managingLinks.service,
+                    suggestedPorts: managingLinks.ports,
+                    onDismiss: {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            managingLinksFor = nil
+                        }
+                    }
+                )
                 .transition(.move(edge: .trailing))
             }
         }
