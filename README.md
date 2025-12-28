@@ -71,7 +71,13 @@ A macOS menu bar app for managing Homebrew services. Start, stop, and restart se
    open BrewServicesManager.xcodeproj
    ```
 
-3. Build and run (⌘R) or archive for distribution (Product → Archive)
+3. **Configure Code Signing** (first time only):
+   - Select the **BrewServicesManager** project in the navigator
+   - Select the **BrewServicesManager** target
+   - Go to **Signing & Capabilities** tab
+   - Select your **Team** from the dropdown (requires Apple Developer account)
+
+4. Build and run (⌘R) or archive for distribution (Product → Archive)
 
 ---
 
@@ -158,6 +164,18 @@ Access settings via the ⚙️ **Settings** menu item:
 - Xcode 26.0 or later
 - macOS 15.0 or later (for running)
 - Homebrew (for testing service management)
+- Apple Developer account (free or paid, for code signing)
+
+### Code Signing Setup
+
+Before building, you need to configure code signing:
+
+1. Open the project in Xcode
+2. Select **BrewServicesManager** project → **BrewServicesManager** target
+3. Go to **Signing & Capabilities**
+4. Select your team from the dropdown
+
+The project does not include a hardcoded development team, allowing each contributor to use their own Apple Developer account.
 
 ### Build Commands
 
