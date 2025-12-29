@@ -20,14 +20,13 @@ struct ServicePort: Codable, Hashable, Sendable, Identifiable {
     /// Suggested URL for this port (for HTTP services)
     var suggestedURL: URL? {
         guard portProtocol == .tcp else { return nil }
-        // Common HTTP ports
-        if port == 80 || (port >= 3000 && port < 10000) {
-            return URL(string: "http://localhost:\(port)")
-        }
-        // Common HTTPS ports
+
+        // Use HTTPS for common secure ports
         if port == 443 || port == 8443 {
             return URL(string: "https://localhost:\(port)")
         }
+
+        // Default to HTTP for all other TCP ports
         return URL(string: "http://localhost:\(port)")
     }
 }

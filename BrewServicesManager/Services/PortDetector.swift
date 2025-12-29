@@ -63,8 +63,8 @@ actor PortDetector {
 
             // Find direct children of this PID
             let result = try await CommandExecutor.run(
-                path: "/bin/ps",
-                arguments: ["-o", "pid=", "-g", "\(currentPID)"],
+                path: "/usr/bin/pgrep",
+                arguments: ["-P", "\(currentPID)"],
                 timeout: .seconds(2)
             )
 

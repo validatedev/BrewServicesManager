@@ -70,11 +70,13 @@ final class ServiceLinksStore {
     }
 
     private func save() {
-        Task.detached(priority: .utility) { [storageURL, linksByService, logger] in
+        let dataToSave = linksByService
+
+        Task.detached(priority: .utility) { [storageURL, logger] in
             do {
                 let encoder = JSONEncoder()
                 encoder.outputFormatting = [.sortedKeys, .prettyPrinted]
-                let data = try encoder.encode(linksByService)
+                let data = try encoder.encode(dataToSave)
 
                 try FileManager.default.createDirectory(
                     at: storageURL.deletingLastPathComponent(),

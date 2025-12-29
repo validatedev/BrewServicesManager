@@ -120,7 +120,7 @@ Add custom URLs to quickly access service web interfaces:
 
 **Examples:**
 - Syncthing → `http://localhost:8384` (Web UI)
-- PostgreSQL → `http://localhost:5432` (Database URL)
+- Local API → `http://localhost:3000` (Development server)
 - nginx → `http://localhost:80` (Web server)
 
 Links are saved automatically and persist across app restarts.

@@ -493,9 +493,7 @@ final class ServicesStore {
             do {
                 let ports = try await portDetector.detectPorts(for: pid)
                 // Update the selectedServiceInfo with detected ports
-                var updatedInfo = info
-                updatedInfo.detectedPorts = ports
-                selectedServiceInfo = updatedInfo
+                selectedServiceInfo = info.withDetectedPorts(ports)
                 logger.info("Detected \(ports.count) ports for \(serviceName)")
             } catch {
                 logger.debug("Port detection failed: \(error.localizedDescription)")

@@ -150,7 +150,7 @@ struct ServiceLinkSuggestionRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(url.absoluteString)
                     .font(.caption)
-                Text("Port \(port.port)")
+                Text("Port \(port.port, format: .number.grouping(.never))")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
@@ -219,7 +219,15 @@ struct AddServiceLinkView: View {
     @FocusState private var urlFieldFocused: Bool
 
     private var isValid: Bool {
-        URL(string: urlString) != nil
+        guard let url = URL(string: urlString),
+              let scheme = url.scheme?.lowercased() else {
+            return false
+        }
+
+        // Block potentially malicious schemes - allow everything else
+        let blockedSchemes = ["javascript", "data", "file"]
+
+        return !blockedSchemes.contains(scheme)
     }
 
     var body: some View {
@@ -299,7 +307,15 @@ struct EditServiceLinkView: View {
     }
 
     private var isValid: Bool {
-        URL(string: urlString) != nil
+        guard let url = URL(string: urlString),
+              let scheme = url.scheme?.lowercased() else {
+            return false
+        }
+
+        // Block potentially malicious schemes - allow everything else
+        let blockedSchemes = ["javascript", "data", "file"]
+
+        return !blockedSchemes.contains(scheme)
     }
 
     var body: some View {
