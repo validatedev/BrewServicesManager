@@ -189,7 +189,7 @@ struct ServiceInfoPortsSectionView: View {
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: true, vertical: false)
 
-                    Text(String(port.port))
+                    Text(port.port, format: .number.grouping(.never))
                         .font(.subheadline)
                         .textSelection(.enabled)
 

@@ -9,6 +9,7 @@ import SwiftUI
 struct ServiceMenuItemView: View {
     @Environment(ServicesStore.self) private var store
     @Environment(ServiceLinksStore.self) private var linksStore
+    @Environment(AppSettings.self) private var settings
 
     let service: BrewServiceListEntry
     let onAction: (ServiceAction) -> Void
@@ -84,6 +85,18 @@ struct ServiceMenuItemView: View {
                     onStopWithOptions: onStopWithOptions,
                     onManageLinks: onManageLinks
                 )
+                .task {
+                    // Fetch ports when popover appears if not already fetched for this service
+                    if store.selectedServiceInfo?.name != service.name ||
+                       store.selectedServiceInfo?.detectedPorts == nil {
+                        await store.fetchServiceInfoWithPorts(
+                            service.name,
+                            domain: settings.selectedDomain,
+                            sudoServiceUser: settings.validatedSudoServiceUser,
+                            debugMode: settings.debugMode
+                        )
+                    }
+                }
             }
         }
     }

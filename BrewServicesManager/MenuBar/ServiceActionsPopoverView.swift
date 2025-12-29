@@ -195,7 +195,7 @@ struct ServiceActionsPopoverView: View {
     }
 
     private func portsDescription(_ ports: [ServicePort]) -> String {
-        let portStrings = ports.prefix(3).map { "\($0.port)" }
+        let portStrings = ports.prefix(3).map { $0.port.formatted(.number.grouping(.never)) }
         let joined = portStrings.joined(separator: ", ")
         return ports.count > 3 ? "\(joined) +\(ports.count - 3)" : joined
     }
