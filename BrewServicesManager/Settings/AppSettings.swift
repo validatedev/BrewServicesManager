@@ -5,6 +5,7 @@
 
 import Foundation
 import SwiftUI
+import ServiceManagement
 
 /// Observable store for application settings.
 /// Uses UserDefaults directly to avoid @Observable/@AppStorage conflict.
@@ -21,6 +22,7 @@ final class AppSettings {
         static let sudoServiceUser = "sudoServiceUser"
         static let debugMode = "debugMode"
         static let autoRefreshInterval = "autoRefreshInterval"
+        static let launchAtLogin = "launchAtLogin"
     }
     
     // MARK: - Settings
@@ -49,6 +51,17 @@ final class AppSettings {
         }
     }
 
+    var launchAtLogin: Bool {
+        didSet {
+            defaults.set(launchAtLogin, forKey: Keys.launchAtLogin)
+            Task { @MainActor in
+                await applyLaunchAtLoginSetting()
+            }
+        }
+    }
+
+    private(set) var launchAtLoginError: LaunchAtLoginError?
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
 
@@ -57,6 +70,12 @@ final class AppSettings {
         sudoServiceUser = defaults.string(forKey: Keys.sudoServiceUser) ?? ""
         debugMode = defaults.bool(forKey: Keys.debugMode)
         autoRefreshInterval = defaults.integer(forKey: Keys.autoRefreshInterval)
+        launchAtLogin = defaults.bool(forKey: Keys.launchAtLogin)
+
+        // Sync with actual system state on launch
+        Task { @MainActor in
+            await syncLaunchAtLoginState()
+        }
     }
     
     // MARK: - Computed Properties
@@ -75,5 +94,77 @@ final class AppSettings {
             return nil
         }
         return trimmed
+    }
+
+    // MARK: - Launch at Login
+
+    /// Synchronizes the stored preference with the actual system state.
+    private func syncLaunchAtLoginState() async {
+        let service = SMAppService.mainApp
+        let actualStatus = service.status
+
+        switch actualStatus {
+        case .enabled:
+            // System says enabled, update our stored value if different
+            if !launchAtLogin {
+                // Update without triggering didSet (to avoid recursion)
+                defaults.set(true, forKey: Keys.launchAtLogin)
+                launchAtLogin = true
+            }
+        case .notRegistered, .notFound:
+            // System says not registered or not found - both mean the login item is not active
+            // .notFound can occur when running from Xcode or if the app hasn't been registered yet
+            if launchAtLogin {
+                defaults.set(false, forKey: Keys.launchAtLogin)
+                launchAtLogin = false
+            }
+        case .requiresApproval:
+            // User needs to approve in System Settings
+            launchAtLoginError = .registrationFailed("Requires approval in System Settings")
+        @unknown default:
+            // Future-proofing for new status values
+            // Don't show an error for unknown statuses, just log it silently
+            break
+        }
+    }
+
+    /// Applies the current launchAtLogin setting to the system.
+    private func applyLaunchAtLoginSetting() async {
+        // Clear any previous error
+        launchAtLoginError = nil
+
+        let service = SMAppService.mainApp
+
+        do {
+            if launchAtLogin {
+                // Register the app to launch at login
+                try await service.register()
+            } else {
+                // Unregister from launch at login
+                try await service.unregister()
+            }
+        } catch {
+            // Handle the error
+            if launchAtLogin {
+                launchAtLoginError = .registrationFailed(error.localizedDescription)
+            } else {
+                launchAtLoginError = .unregistrationFailed(error.localizedDescription)
+            }
+
+            // Revert the setting to match actual state
+            let actualEnabled = service.status == .enabled
+            defaults.set(actualEnabled, forKey: Keys.launchAtLogin)
+            launchAtLogin = actualEnabled
+        }
+
+        // Check if approval is required
+        if service.status == .requiresApproval {
+            launchAtLoginError = .registrationFailed("Requires approval in System Settings > General > Login Items")
+        }
+    }
+
+    /// Manually refresh the launch-at-login status from the system.
+    func refreshLaunchAtLoginStatus() async {
+        await syncLaunchAtLoginState()
     }
 }

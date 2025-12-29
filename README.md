@@ -37,6 +37,7 @@ A macOS menu bar app for managing Homebrew services. Start, stop, and restart se
 - **Port Detection** — Automatically detect and display listening ports for running services
 - **Service Links** — Configure custom URLs for quick access to service web interfaces
 - **System Domain Support** — Manage both user and system-level services with privilege escalation
+- **Launch at Login** — Optionally start the app automatically when you log in
 - **Auto-refresh** — Configurable refresh interval
 - **Debug Mode** — Verbose output for troubleshooting
 
@@ -158,6 +159,7 @@ Access settings via the ⚙️ **Settings** menu item:
 - **Sudo Service User** — Specify a user for sudo operations (system domain)
 - **Auto-refresh Interval** — Set how often to refresh the service list (0 = disabled)
 - **Debug Mode** — Enable verbose output for troubleshooting
+- **Launch at Login** — Automatically start the app when you log in to macOS
 
 ---
 

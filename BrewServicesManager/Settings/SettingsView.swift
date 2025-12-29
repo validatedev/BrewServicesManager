@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import AppKit
 
 /// Settings view for configuring app preferences.
 struct SettingsView: View {
@@ -61,6 +62,41 @@ struct SettingsView: View {
                         Text("Show detailed Homebrew output")
                             .font(.caption2)
                             .foregroundStyle(.secondary)
+                    }
+
+                    PanelSectionCardView(title: "Launch") {
+                        Toggle("Launch at login", isOn: $settings.launchAtLogin)
+
+                        Text("Automatically start when you log in")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+
+                        // Show error if present
+                        if let error = settings.launchAtLoginError {
+                            VStack(alignment: .leading, spacing: LayoutConstants.compactSpacing) {
+                                Label("Error", systemImage: "exclamationmark.triangle.fill")
+                                    .font(.caption)
+                                    .foregroundStyle(.red)
+
+                                Text(error.localizedDescription)
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+
+                                if let suggestion = error.recoverySuggestion {
+                                    Text(suggestion)
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                }
+
+                                Button("Open System Settings", systemImage: "gearshape") {
+                                    if let url = URL(string: "x-apple.systempreferences:com.apple.LoginItems-Settings.extension") {
+                                        NSWorkspace.shared.open(url)
+                                    }
+                                }
+                                .font(.caption)
+                            }
+                            .padding(.top, LayoutConstants.compactPadding)
+                        }
                     }
                 }
                 .padding(.horizontal, LayoutConstants.compactPadding)
