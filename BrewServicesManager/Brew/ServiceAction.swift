@@ -6,7 +6,7 @@
 import Foundation
 
 /// Actions that can be performed on a Homebrew service.
-enum ServiceAction: Sendable {
+nonisolated enum ServiceAction: Sendable {
     /// Run the service once without registering it.
     case run
     
@@ -23,7 +23,7 @@ enum ServiceAction: Sendable {
     case kill
     
     /// The brew subcommand for this action.
-    nonisolated var subcommand: String {
+    var subcommand: String {
         switch self {
         case .run: "run"
         case .start: "start"
@@ -34,7 +34,7 @@ enum ServiceAction: Sendable {
     }
     
     /// Additional arguments for this action.
-    nonisolated var additionalArguments: [String] {
+    var additionalArguments: [String] {
         switch self {
         case .stop(let keepRegistered, let waitBehavior):
             var args: [String] = []
@@ -49,7 +49,7 @@ enum ServiceAction: Sendable {
     }
     
     /// Human-readable label for this action.
-    nonisolated var label: String {
+    var label: String {
         switch self {
         case .run: "Run (one-shot)"
         case .start: "Start at Login"
@@ -59,4 +59,3 @@ enum ServiceAction: Sendable {
         }
     }
 }
-

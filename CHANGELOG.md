@@ -10,8 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Automatic update support via Sparkle framework
-- "Check for Updates" option in Settings
-- Toggle for automatic update checks
 - Port detection for running services using `lsof`
 - User-configurable service links with custom URLs
 - Auto-suggest URLs based on detected listening ports
@@ -19,9 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Refactored menu bar views into single-view files
-- Hardened actor isolation for safer Swift concurrency
-- Removed hardcoded development team IDs for open source contributions
+- Refactored menu bar views and navigation
+- Improved concurrency with hardened actor isolation and off-main-actor loading
+- Switched to LazyVStack in menu views
 
 ### Fixed
 

@@ -6,7 +6,7 @@
 import Foundation
 
 /// Detailed information about a Homebrew service from `brew services info --json`.
-struct BrewServiceInfoEntry: Codable, Identifiable, Hashable, Sendable {
+nonisolated struct BrewServiceInfoEntry: Codable, Identifiable, Hashable, Sendable {
     
     // MARK: - Basic Info
     
@@ -75,7 +75,7 @@ struct BrewServiceInfoEntry: Codable, Identifiable, Hashable, Sendable {
 
     // MARK: - Initializer
 
-    nonisolated init(
+    init(
         name: String,
         serviceName: String?,
         status: BrewServiceStatus,
@@ -120,7 +120,7 @@ struct BrewServiceInfoEntry: Codable, Identifiable, Hashable, Sendable {
     }
 
     // Custom Decodable implementation to handle runtime-only detectedPorts
-    nonisolated init(from decoder: Decoder) throws {
+    init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         name = try container.decode(String.self, forKey: .name)

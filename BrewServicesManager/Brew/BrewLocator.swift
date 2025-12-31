@@ -7,7 +7,7 @@ import Foundation
 import OSLog
 
 /// Locates the Homebrew executable on the system.
-enum BrewLocator {
+nonisolated enum BrewLocator {
     
     private static let logger = Logger(subsystem: "BrewServicesManager", category: "BrewLocator")
     

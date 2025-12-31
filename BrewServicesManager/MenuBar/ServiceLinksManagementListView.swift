@@ -12,8 +12,8 @@ struct ServiceLinksManagementListView: View {
     let serviceName: String
     let suggestedPorts: [ServicePort]
     let onDismiss: () -> Void
-    @Binding var showingAddLink: Bool
-    @Binding var editingLink: ServiceLink?
+    let onAddLink: () -> Void
+    let onEditLink: (ServiceLink) -> Void
 
     private var links: [ServiceLink] {
         linksStore.links(for: serviceName)
@@ -26,7 +26,7 @@ struct ServiceLinksManagementListView: View {
             Divider()
 
             ScrollView {
-                VStack(alignment: .leading, spacing: LayoutConstants.compactPadding) {
+                LazyVStack(alignment: .leading, spacing: LayoutConstants.compactPadding) {
                     // Suggestions section
                     if !suggestedPorts.isEmpty && links.isEmpty {
                         PanelSectionCardView(
@@ -64,9 +64,7 @@ struct ServiceLinksManagementListView: View {
                                         openURL(link.url)
                                     },
                                     onEdit: {
-                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                            editingLink = link
-                                        }
+                                        onEditLink(link)
                                     },
                                     onDelete: {
                                         linksStore.removeLink(link.id, from: serviceName)
@@ -78,9 +76,7 @@ struct ServiceLinksManagementListView: View {
 
                     // Add button
                     Button("Add Custom Link", systemImage: "plus.circle") {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            showingAddLink = true
-                        }
+                        onAddLink()
                     }
                     .buttonStyle(.borderless)
                     .padding(.horizontal, LayoutConstants.headerVerticalPadding)

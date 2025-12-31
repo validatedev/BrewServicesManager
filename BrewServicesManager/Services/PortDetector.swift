@@ -117,7 +117,7 @@ actor PortDetector {
     }
 }
 
-enum PortDetectorError: Error, LocalizedError {
+nonisolated enum PortDetectorError: Error, LocalizedError {
     case lsofFailed(exitCode: Int32, stderr: String)
     case noPIDAvailable
 

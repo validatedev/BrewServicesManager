@@ -6,7 +6,7 @@
 import Foundation
 
 /// Represents a single service entry from `brew services list --json`.
-struct BrewServiceListEntry: Codable, Identifiable, Sendable {
+nonisolated struct BrewServiceListEntry: Codable, Identifiable, Sendable {
     
     /// The name of the formula.
     let name: String
@@ -40,7 +40,7 @@ struct BrewServiceListEntry: Codable, Identifiable, Sendable {
     // MARK: - Computed Properties
     
     /// Whether this is a system service (LaunchDaemon).
-    nonisolated var isSystemService: Bool {
+    var isSystemService: Bool {
         if let file {
             return file.hasPrefix("/Library/LaunchDaemons/")
         }
@@ -48,10 +48,10 @@ struct BrewServiceListEntry: Codable, Identifiable, Sendable {
     }
     
     /// A display-friendly name for the service.
-    nonisolated var displayName: String { name }
+    var displayName: String { name }
     
     /// The file URL if a plist file is specified.
-    nonisolated var fileURL: URL? {
+    var fileURL: URL? {
         guard let file else { return nil }
         return URL(filePath: file)
     }

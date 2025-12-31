@@ -17,7 +17,7 @@ struct ServiceInfoView: View {
             Divider()
             
             ScrollView {
-                VStack(alignment: .leading, spacing: LayoutConstants.compactPadding) {
+                LazyVStack(alignment: .leading, spacing: LayoutConstants.compactPadding) {
                     if let serviceName = info.serviceName, serviceName != info.name {
                         HStack(alignment: .firstTextBaseline, spacing: LayoutConstants.compactSpacing) {
                             Text("Service")

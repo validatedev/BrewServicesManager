@@ -1,6 +1,6 @@
 import Foundation
 
-struct ServiceOperation: Sendable {
+nonisolated struct ServiceOperation: Sendable {
     var status: ServiceOperationStatus
     var action: ServiceAction?
     var error: AppError?

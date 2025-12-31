@@ -6,7 +6,7 @@
 import Foundation
 
 /// Contains the result of executing a shell command.
-struct CommandResult: Sendable {
+nonisolated struct CommandResult: Sendable {
     let executablePath: String
     let arguments: [String]
     let stdout: String
@@ -16,7 +16,7 @@ struct CommandResult: Sendable {
     let duration: Duration
     
     /// Whether the command completed successfully (exit code 0).
-    nonisolated var isSuccess: Bool {
+    var isSuccess: Bool {
         exitCode == 0 && !wasCancelled
     }
 }

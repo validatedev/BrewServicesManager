@@ -1,6 +1,6 @@
 import Foundation
 
-enum ServicesState: Sendable {
+nonisolated enum ServicesState: Sendable {
     case idle
     case loading
     case refreshing([BrewServiceListEntry])

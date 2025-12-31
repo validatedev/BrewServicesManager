@@ -1,5 +1,5 @@
 import Foundation
 
-enum CommandExecutorError: Error {
+nonisolated enum CommandExecutorError: Error {
     case timedOut
 }

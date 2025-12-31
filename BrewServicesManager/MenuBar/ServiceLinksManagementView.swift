@@ -12,8 +12,7 @@ struct ServiceLinksManagementView: View {
     let suggestedPorts: [ServicePort]
     let onDismiss: () -> Void
 
-    @State private var showingAddLink = false
-    @State private var editingLink: ServiceLink?
+    @State private var route: ServiceLinksManagementRoute = .list
 
     var body: some View {
         ZStack {
@@ -22,24 +21,32 @@ struct ServiceLinksManagementView: View {
                 serviceName: serviceName,
                 suggestedPorts: suggestedPorts,
                 onDismiss: onDismiss,
-                showingAddLink: $showingAddLink,
-                editingLink: $editingLink
+                onAddLink: {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        route = .add
+                    }
+                },
+                onEditLink: { link in
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        route = .edit(link)
+                    }
+                }
             )
-                .opacity(showingAddLink || editingLink != nil ? 0 : 1)
+            .opacity(route == .list ? 1 : 0)
 
             // Add link form overlay
-            if showingAddLink {
+            if route == .add {
                 AddServiceLinkView(
                     serviceName: serviceName,
                     onSave: { url, label in
                         linksStore.addLink(ServiceLink(url: url, label: label), to: serviceName)
                         withAnimation(.easeInOut(duration: 0.2)) {
-                            showingAddLink = false
+                            route = .list
                         }
                     },
                     onCancel: {
                         withAnimation(.easeInOut(duration: 0.2)) {
-                            showingAddLink = false
+                            route = .list
                         }
                     }
                 )
@@ -47,18 +54,18 @@ struct ServiceLinksManagementView: View {
             }
 
             // Edit link form overlay
-            if let link = editingLink {
+            if case .edit(let link) = route {
                 EditServiceLinkView(
                     link: link,
                     onSave: { url, label in
                         linksStore.updateLink(link.id, in: serviceName, url: url, label: label)
                         withAnimation(.easeInOut(duration: 0.2)) {
-                            editingLink = nil
+                            route = .list
                         }
                     },
                     onCancel: {
                         withAnimation(.easeInOut(duration: 0.2)) {
-                            editingLink = nil
+                            route = .list
                         }
                     }
                 )
