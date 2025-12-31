@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		E937B6532F05D88E0004AA0B /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = E937B6522F05D88E0004AA0B /* Sparkle */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		E98E76372EED8BDB000D2DA9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -65,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E937B6532F05D88E0004AA0B /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,6 +130,7 @@
 			);
 			name = BrewServicesManager;
 			packageProductDependencies = (
+				E937B6522F05D88E0004AA0B /* Sparkle */,
 			);
 			productName = BrewServicesManager;
 			productReference = E98E76272EED8BD9000D2DA9 /* BrewServicesManager.app */;
@@ -208,6 +214,9 @@
 			);
 			mainGroup = E98E761E2EED8BD9000D2DA9;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				E937B6512F05D88E0004AA0B /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E98E76282EED8BD9000D2DA9 /* Products */;
 			projectDirPath = "";
@@ -594,6 +603,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E937B6512F05D88E0004AA0B /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.8.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E937B6522F05D88E0004AA0B /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E937B6512F05D88E0004AA0B /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E98E761F2EED8BD9000D2DA9 /* Project object */;
 }

@@ -10,6 +10,7 @@ struct BrewServicesManagerApp: App {
     @State private var servicesStore = ServicesStore()
     @State private var appSettings = AppSettings()
     @State private var serviceLinksStore = ServiceLinksStore()
+    @State private var appUpdater = AppUpdater()
 
     private var iconName: String {
         if !servicesStore.isBrewAvailable {
@@ -44,6 +45,11 @@ struct BrewServicesManagerApp: App {
                 .environment(servicesStore)
                 .environment(appSettings)
                 .environment(serviceLinksStore)
+                .environment(appUpdater)
+                .task {
+                    // Sync settings with Sparkle on launch
+                    appUpdater.automaticallyChecksForUpdates = appSettings.automaticallyCheckForUpdates
+                }
         } label: {
             Label("Brew Services Manager", systemImage: iconName)
                 .labelStyle(.iconOnly)

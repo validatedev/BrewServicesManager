@@ -4,5 +4,11 @@
 <dict>
     <key>LSUIElement</key>
     <true/>
+    <key>SUFeedURL</key>
+    <string>https://raw.githubusercontent.com/validatedev/BrewServicesManager/main/appcast.xml</string>
+    <key>SUPublicEDKey</key>
+    <string>V64zhu+UMvLN3nnh59LrfFyePZm//1/ZF9T3MPEBj4s=</string>
+    <key>SUEnableAutomaticChecks</key>
+    <true/>
 </dict>
 </plist>

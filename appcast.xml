@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>Brew Services Manager Updates</title>
+    <link>https://github.com/validatedev/BrewServicesManager</link>
+    <description>Most recent updates to Brew Services Manager</description>
+    <language>en</language>
+
+    <!-- Example release entry (uncomment and update for each release):
+    <item>
+      <title>Version 1.1</title>
+      <sparkle:version>2</sparkle:version>
+      <sparkle:shortVersionString>1.1</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <pubDate>Wed, 01 Jan 2026 12:00:00 +0000</pubDate>
+      <enclosure
+        url="https://github.com/validatedev/BrewServicesManager/releases/download/v1.1/BrewServicesManager-1.1.dmg"
+        sparkle:edSignature="PASTE_SIGNATURE_FROM_SIGN_UPDATE_TOOL"
+        length="FILE_SIZE_IN_BYTES"
+        type="application/octet-stream" />
+    </item>
+    -->
+
+  </channel>
+</rss>

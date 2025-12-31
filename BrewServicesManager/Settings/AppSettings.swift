@@ -21,6 +21,7 @@ final class AppSettings {
         static let sudoServiceUser = "sudoServiceUser"
         static let debugMode = "debugMode"
         static let autoRefreshInterval = "autoRefreshInterval"
+        static let automaticallyCheckForUpdates = "automaticallyCheckForUpdates"
     }
     
     // MARK: - Settings
@@ -49,6 +50,13 @@ final class AppSettings {
         }
     }
 
+    /// Whether to automatically check for app updates.
+    var automaticallyCheckForUpdates: Bool {
+        didSet {
+            defaults.set(automaticallyCheckForUpdates, forKey: Keys.automaticallyCheckForUpdates)
+        }
+    }
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
 
@@ -57,6 +65,8 @@ final class AppSettings {
         sudoServiceUser = defaults.string(forKey: Keys.sudoServiceUser) ?? ""
         debugMode = defaults.bool(forKey: Keys.debugMode)
         autoRefreshInterval = defaults.integer(forKey: Keys.autoRefreshInterval)
+        // Default to true (opt-in by default)
+        automaticallyCheckForUpdates = defaults.object(forKey: Keys.automaticallyCheckForUpdates) as? Bool ?? true
     }
     
     // MARK: - Computed Properties

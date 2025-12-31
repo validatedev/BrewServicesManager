@@ -8,6 +8,7 @@ import SwiftUI
 /// Settings view for configuring app preferences.
 struct SettingsView: View {
     @Environment(AppSettings.self) private var settings
+    @Environment(AppUpdater.self) private var appUpdater
     let onDismiss: () -> Void
     
     var body: some View {
@@ -59,6 +60,25 @@ struct SettingsView: View {
                         Toggle("Debug mode", isOn: $settings.debugMode)
 
                         Text("Show detailed Homebrew output")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    PanelSectionCardView(title: "Updates") {
+                        Button("Check for Updates…") {
+                            appUpdater.checkForUpdates()
+                        }
+                        .disabled(!appUpdater.canCheckForUpdates)
+                        .controlSize(.small)
+
+                        Toggle("Automatically check for updates", isOn: $settings.automaticallyCheckForUpdates)
+                            .onChange(of: settings.automaticallyCheckForUpdates) { _, newValue in
+                                appUpdater.automaticallyChecksForUpdates = newValue
+                            }
+
+                        Text(settings.automaticallyCheckForUpdates 
+                             ? "New versions are delivered automatically"
+                             : "Check manually using the button above")
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                     }
