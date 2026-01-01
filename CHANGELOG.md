@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-01-01
+
 ### Added
 
 - App version and build number display in Settings
@@ -50,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Detailed service information view
 - Debug mode for verbose Homebrew output
 
-[unreleased]: https://github.com/validatedev/BrewServicesManager/compare/v1.1.0...HEAD
+[unreleased]: https://github.com/validatedev/BrewServicesManager/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/validatedev/BrewServicesManager/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/validatedev/BrewServicesManager/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/validatedev/BrewServicesManager/releases/tag/v1.0.0
