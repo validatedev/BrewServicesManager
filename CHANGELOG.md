@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Release script updates and stages the Homebrew cask before tagging releases
+- Homebrew cask automation now uses the Casks directory as the single source of truth
+
+### Removed
+
+- Duplicate root-level Homebrew cask file
+
 ## [1.1.1] - 2026-01-01
 
 ### Added

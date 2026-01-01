@@ -12,7 +12,7 @@ set -e
 # 5. Updates CHANGELOG.md and appcast.xml
 # 6. Commits, tags, and pushes
 # 7. Creates a GitHub release draft
-# 8. Updates Homebrew cask definition files
+# 8. Updates Homebrew cask definition file
 # 9. Optionally submits a PR to homebrew-cask
 #
 # Prerequisites:
@@ -25,7 +25,7 @@ set -e
 # Notes:
 # - Homebrew PR submission requires the GitHub release to be published (not draft)
 # - brew bump-cask-pr will fork homebrew-cask automatically if needed
-# - Manual PR submission is still possible using the updated cask files
+# - Manual PR submission is still possible using the updated cask file
 #
 # Usage: ./release.sh <version>
 # ============================================================================
@@ -355,24 +355,19 @@ update_homebrew_cask() {
     local version="$1"
     local dmg_path="$2"
     local sha256_checksum
-    local cask_files=(
-        "$PROJECT_ROOT/brew-services-manager.rb"
-        "$PROJECT_ROOT/Casks/brew-services-manager.rb"
-    )
+    local cask_file="$PROJECT_ROOT/Casks/brew-services-manager.rb"
+
+    if [ ! -f "$cask_file" ]; then
+        echo "Error: Cask file not found: $cask_file"
+        return 1
+    fi
 
     sha256_checksum=$(calculate_sha256 "$dmg_path") || return 1
 
-    for cask_file in "${cask_files[@]}"; do
-        if [ ! -f "$cask_file" ]; then
-            echo "Warning: Cask file not found: $cask_file"
-            continue
-        fi
+    sed -i '' "s/version \"[^\"]*\"/version \"$version\"/" "$cask_file"
+    sed -i '' "s/sha256 \"[^\"]*\"/sha256 \"$sha256_checksum\"/" "$cask_file"
 
-        sed -i '' "s/version \"[^\"]*\"/version \"$version\"/" "$cask_file"
-        sed -i '' "s/sha256 \"[^\"]*\"/sha256 \"$sha256_checksum\"/" "$cask_file"
-    done
-
-    echo "Updated Homebrew casks to version $version with SHA256 $sha256_checksum"
+    echo "Updated Homebrew cask to version $version with SHA256 $sha256_checksum"
 }
 
 submit_homebrew_pr() {
@@ -383,16 +378,12 @@ submit_homebrew_pr() {
         return 1
     fi
 
-    if [ ! -f "$PROJECT_ROOT/brew-services-manager.rb" ]; then
-        echo "Cask file not found at $PROJECT_ROOT/brew-services-manager.rb"
+    if [ ! -f "$PROJECT_ROOT/Casks/brew-services-manager.rb" ]; then
+        echo "Cask file not found at $PROJECT_ROOT/Casks/brew-services-manager.rb"
         return 1
     fi
 
     local audit_cask_path="$PROJECT_ROOT/Casks/brew-services-manager.rb"
-    if [ ! -f "$audit_cask_path" ]; then
-        audit_cask_path="$PROJECT_ROOT/brew-services-manager.rb"
-    fi
-
     echo "Running Homebrew audit on $audit_cask_path..."
     if ! brew audit --cask --online "$audit_cask_path"; then
         echo "Homebrew audit failed for $audit_cask_path."
@@ -474,8 +465,7 @@ fi
 VERSION="$1"
 BUILD_DIR="$PROJECT_ROOT/build"
 APP_PATH="$BUILD_DIR/Build/Products/Release/$APP_NAME.app"
-CASK_FILE_ROOT="$PROJECT_ROOT/brew-services-manager.rb"
-CASK_FILE_TAP="$PROJECT_ROOT/Casks/brew-services-manager.rb"
+CASK_FILE_PATH="$PROJECT_ROOT/Casks/brew-services-manager.rb"
 HOMEBREW_CASK_UPDATED="no"
 HOMEBREW_PR_SUBMITTED="no"
 
@@ -532,10 +522,25 @@ update_changelog_version "$VERSION"
 # Update appcast
 update_appcast "$VERSION" "$BUNDLE_VERSION" "$DMG_URL" "$SIGNATURE" "$FILE_SIZE"
 
+# Update Homebrew cask files
+echo ""
+read -p "Update Homebrew cask files for this release? (y/n) " -n 1 -r
+echo ""
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    if update_homebrew_cask "$VERSION" "$DMG_PATH"; then
+        HOMEBREW_CASK_UPDATED="yes"
+    else
+        echo "Homebrew cask update failed."
+    fi
+fi
+
 # Commit and tag
 echo ""
 echo "The following files have been modified:"
 git status --short "$APPCAST_FILE" "$CHANGELOG_FILE" "$PROJECT_ROOT/$APP_NAME.xcodeproj/project.pbxproj" 2>/dev/null || true
+if [[ "$HOMEBREW_CASK_UPDATED" == "yes" ]]; then
+    git status --short "$CASK_FILE_PATH" 2>/dev/null || true
+fi
 echo ""
 read -p "Commit release changes and create tag v$VERSION? (y/n) " -n 1 -r
 echo ""
@@ -544,6 +549,9 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     git add "$APPCAST_FILE"
     [ -f "$CHANGELOG_FILE" ] && git add "$CHANGELOG_FILE"
     git add "$PROJECT_ROOT/$APP_NAME.xcodeproj/project.pbxproj"
+    if [[ "$HOMEBREW_CASK_UPDATED" == "yes" ]]; then
+        git add "$CASK_FILE_PATH"
+    fi
 
     # Commit
     git commit -m "chore: release $VERSION"
@@ -571,27 +579,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 fi
 
 echo ""
-read -p "Update Homebrew cask files? (y/n) " -n 1 -r
-echo ""
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    if update_homebrew_cask "$VERSION" "$DMG_PATH"; then
-        HOMEBREW_CASK_UPDATED="yes"
-        echo ""
-        echo "The following files have been modified:"
-        git status --short "$CASK_FILE_ROOT" "$CASK_FILE_TAP" 2>/dev/null || true
-        echo ""
-        read -p "Commit Homebrew cask updates? (y/n) " -n 1 -r
-        echo ""
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            git add "$CASK_FILE_ROOT" "$CASK_FILE_TAP"
-            git commit -m "chore: update Homebrew cask to $VERSION"
-        fi
-    else
-        echo "Homebrew cask update failed."
-    fi
-fi
-
-echo ""
 read -p "Submit Homebrew cask PR? (requires published GitHub release) (y/n) " -n 1 -r
 echo ""
 if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -611,9 +598,9 @@ echo "  Appcast: $APPCAST_FILE"
 echo "  Changelog: $CHANGELOG_FILE"
 echo "Homebrew:"
 if [[ "$HOMEBREW_CASK_UPDATED" == "yes" ]]; then
-    echo "  Cask files updated: $CASK_FILE_ROOT, $CASK_FILE_TAP"
+    echo "  Cask file updated: $CASK_FILE_PATH"
 else
-    echo "  Cask files updated: no"
+    echo "  Cask file updated: no"
 fi
 if [[ "$HOMEBREW_PR_SUBMITTED" == "yes" ]]; then
     echo "  PR status: Submitted"
