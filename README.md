@@ -79,15 +79,6 @@ A macOS menu bar app for managing Homebrew services. Start, stop, and restart se
 
 4. Build and run (⌘R) or archive for distribution (Product → Archive)
 
-### Option 3: Install via Homebrew
-
-1. Install using Homebrew:
-   ```bash
-   brew install --cask brew-services-manager
-   ```
-
-2. Launch the app from Applications or Spotlight
-
 ---
 
 ## Usage
