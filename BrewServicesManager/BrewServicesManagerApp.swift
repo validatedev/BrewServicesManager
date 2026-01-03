@@ -20,22 +20,27 @@ struct BrewServicesManagerApp: App {
         if servicesStore.globalOperation?.status == .running {
             return "gearshape.2"
         }
-        
+
         if servicesStore.isRefreshing {
             return "mug"  // Loading state
         }
-        
+
         // Check if any service has an error
         let hasError = servicesStore.nonFatalError != nil || servicesStore.services.contains { $0.status == .error }
         if hasError {
             return "exclamationmark.triangle.fill"
         }
-        
+
         // Show different icon for system domain
         if appSettings.selectedDomain == .system {
             return "lock.fill"
         }
-        
+
+        // Show badge when update is available and waiting for user attention
+        if appUpdater.hasUpdateWaitingForAttention {
+            return "mug.badge.plus"
+        }
+
         return "mug.fill"  // Normal state
     }
 

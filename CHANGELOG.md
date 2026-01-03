@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Gentle update reminders with menu bar icon badge instead of intrusive modal alerts
+
+
+### Changed
+
+- Extended macOS support to all Sequoia versions
+
 ## [1.1.2] - 2026-01-01
 
 ### Changed
