@@ -225,7 +225,7 @@ struct AddServiceLinkView: View {
         }
 
         // Block potentially malicious schemes - allow everything else
-        let blockedSchemes = ["javascript", "data", "file"]
+        let blockedSchemes = ["javascript", "data"]
 
         return !blockedSchemes.contains(scheme)
     }
@@ -313,7 +313,7 @@ struct EditServiceLinkView: View {
         }
 
         // Block potentially malicious schemes - allow everything else
-        let blockedSchemes = ["javascript", "data", "file"]
+        let blockedSchemes = ["javascript", "data"]
 
         return !blockedSchemes.contains(scheme)
     }

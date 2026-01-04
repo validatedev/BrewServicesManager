@@ -24,6 +24,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E9DEVCFG2EED8BD9000D2DA9 /* Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Development.xcconfig; sourceTree = "<group>"; };
 		E98E76272EED8BD9000D2DA9 /* BrewServicesManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BrewServicesManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E98E76362EED8BDB000D2DA9 /* BrewServicesManagerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BrewServicesManagerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E98E76402EED8BDB000D2DA9 /* BrewServicesManagerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BrewServicesManagerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -85,9 +86,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E9CONFIG2EED8BD9000D2DA9 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				E9DEVCFG2EED8BD9000D2DA9 /* Development.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
 		E98E761E2EED8BD9000D2DA9 = {
 			isa = PBXGroup;
 			children = (
+				E9CONFIG2EED8BD9000D2DA9 /* Config */,
 				E98E76292EED8BD9000D2DA9 /* BrewServicesManager */,
 				E98E76392EED8BDB000D2DA9 /* BrewServicesManagerTests */,
 				E98E76432EED8BDB000D2DA9 /* BrewServicesManagerUITests */,
@@ -402,6 +412,7 @@
 		};
 		E98E764B2EED8BDB000D2DA9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E9DEVCFG2EED8BD9000D2DA9 /* Development.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -409,7 +420,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = UUW59LGK2E;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -437,6 +447,7 @@
 		};
 		E98E764C2EED8BDB000D2DA9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E9DEVCFG2EED8BD9000D2DA9 /* Development.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -444,7 +455,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = UUW59LGK2E;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;

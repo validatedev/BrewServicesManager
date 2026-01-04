@@ -1,0 +1,17 @@
+// Development.shared.xcconfig
+//
+// IMPORTANT: This is a template file.
+// To build this project, you need to:
+//
+// 1. Copy this file to Development.xcconfig:
+//    cp Config/Development.shared.xcconfig Config/Development.xcconfig
+//
+// 2. Edit Development.xcconfig and replace YOUR_TEAM_ID with your Apple Developer Team ID
+//
+// 3. Your Team ID can be found at https://developer.apple.com/account
+//    OR in Xcode Preferences → Accounts → [Your Account] → Team ID
+//
+
+DEVELOPMENT_TEAM = YOUR_TEAM_ID
+
+// Note: Development.xcconfig is gitignored so your team ID stays private

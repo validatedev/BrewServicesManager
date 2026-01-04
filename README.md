@@ -72,10 +72,15 @@ A macOS menu bar app for managing Homebrew services. Start, stop, and restart se
    ```
 
 3. **Configure Code Signing** (first time only):
-   - Select the **BrewServicesManager** project in the navigator
-   - Select the **BrewServicesManager** target
-   - Go to **Signing & Capabilities** tab
-   - Select your **Team** from the dropdown (requires Apple Developer account)
+   ```bash
+   # Copy the development config template
+   cp Config/Development.shared.xcconfig Config/Development.xcconfig
+
+   # Edit the file and replace YOUR_TEAM_ID with your Apple Developer Team ID
+   # You can find your Team ID at: https://developer.apple.com/account
+   # OR in Xcode: Settings → Accounts → [Your Account] → Team ID
+   nano Config/Development.xcconfig
+   ```
 
 4. Build and run (⌘R) or archive for distribution (Product → Archive)
 
