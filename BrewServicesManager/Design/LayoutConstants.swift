@@ -21,6 +21,7 @@ enum LayoutConstants {
     static let previewGlassWidth: CGFloat = 200
     static let previewGlassHeight: CGFloat = 100
     static let previewPanelHeight: CGFloat = 200
+    static let previewSpacing: CGFloat = 20
 
     static let glassCornerRadius: CGFloat = 8
     static let hoverCornerRadius: CGFloat = 6

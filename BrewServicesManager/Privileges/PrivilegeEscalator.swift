@@ -8,7 +8,7 @@ import AppKit
 import OSLog
 
 /// Provides privilege escalation for running commands as root.
-enum PrivilegeEscalator {
+nonisolated enum PrivilegeEscalator {
 
     private static let logger = Logger(subsystem: "BrewServicesManager", category: "PrivilegeEscalator")
     

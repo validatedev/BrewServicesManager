@@ -9,6 +9,7 @@ import AppKit
 /// Settings view for configuring app preferences.
 struct SettingsView: View {
     @Environment(AppSettings.self) private var settings
+    @Environment(AppUpdater.self) private var appUpdater
     let onDismiss: () -> Void
     
     var body: some View {
@@ -98,6 +99,33 @@ struct SettingsView: View {
                             .padding(.top, LayoutConstants.compactPadding)
                         }
                     }
+
+                    PanelSectionCardView(title: "Updates") {
+                        Button("Check for Updates…") {
+                            appUpdater.checkForUpdates()
+                        }
+                        .disabled(!appUpdater.canCheckForUpdates)
+                        .controlSize(.small)
+
+                        Toggle("Automatically check for updates", isOn: $settings.automaticallyCheckForUpdates)
+                            .onChange(of: settings.automaticallyCheckForUpdates) { _, newValue in
+                                appUpdater.automaticallyChecksForUpdates = newValue
+                            }
+
+                        Text(settings.automaticallyCheckForUpdates
+                             ? "New versions are delivered automatically"
+                             : "Check manually using the button above")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    PanelSectionCardView(title: "About") {
+                        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+                        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
+
+                        LabeledContent("Version", value: "\(version) (\(build))")
+                            .font(.callout)
+                    }
                 }
                 .padding(.horizontal, LayoutConstants.compactPadding)
                 .padding(.vertical, LayoutConstants.headerVerticalPadding)
@@ -110,5 +138,6 @@ struct SettingsView: View {
 #Preview {
     SettingsView { }
         .environment(AppSettings())
+        .environment(AppUpdater())
         .frame(width: LayoutConstants.settingsMenuWidth)
 }

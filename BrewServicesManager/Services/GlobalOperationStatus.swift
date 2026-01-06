@@ -1,4 +1,4 @@
-enum GlobalOperationStatus: Sendable, Equatable {
+nonisolated enum GlobalOperationStatus: Sendable, Equatable {
     case running
     case completed
 }

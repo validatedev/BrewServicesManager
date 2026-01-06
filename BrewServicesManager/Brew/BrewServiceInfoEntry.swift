@@ -6,7 +6,7 @@
 import Foundation
 
 /// Detailed information about a Homebrew service from `brew services info --json`.
-struct BrewServiceInfoEntry: Codable, Identifiable, Hashable, Sendable {
+nonisolated struct BrewServiceInfoEntry: Codable, Identifiable, Hashable, Sendable {
     
     // MARK: - Basic Info
     

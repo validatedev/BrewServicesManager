@@ -16,11 +16,11 @@ final class ServiceLinksStore {
     private(set) var linksByService: [String: [ServiceLink]] = [:]
 
     private let storageURL: URL
+    private var saveTask: Task<Void, Never>?
 
     init() {
         // Use same pattern as ServicesDiskCache
-        let applicationSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
-        let base = applicationSupport ?? URL(fileURLWithPath: NSTemporaryDirectory())
+        let base = URL.applicationSupportDirectory
         let hostIdentifier = (Bundle.main.bundleIdentifier ?? ProcessInfo.processInfo.processName)
             .replacing("/", with: "_")
 
@@ -30,7 +30,7 @@ final class ServiceLinksStore {
 
         storageURL = directory.appending(path: "service-links.json")
 
-        load()
+        Task { await load() }
     }
 
     func links(for serviceName: String) -> [ServiceLink] {
@@ -58,21 +58,35 @@ final class ServiceLinksStore {
         save()
     }
 
-    private func load() {
-        do {
-            let data = try Data(contentsOf: storageURL)
-            let decoder = JSONDecoder()
-            linksByService = try decoder.decode([String: [ServiceLink]].self, from: data)
+    private func load() async {
+        let storageURL = storageURL
+        let loadResult = await Task.detached(priority: .utility) { () -> Result<[String: [ServiceLink]], Error> in
+            do {
+                let data = try Data(contentsOf: storageURL)
+                let decoder = JSONDecoder()
+                let decoded = try decoder.decode([String: [ServiceLink]].self, from: data)
+                return .success(decoded)
+            } catch {
+                return .failure(error)
+            }
+        }.value
+
+        switch loadResult {
+        case .success(let decoded):
+            linksByService = decoded
             logger.info("Loaded service links for \(self.linksByService.count) services")
-        } catch {
+        case .failure(let error):
             logger.debug("No existing links file or failed to load: \(error.localizedDescription)")
         }
     }
 
     private func save() {
         let dataToSave = linksByService
+        let previousTask = saveTask
 
-        Task.detached(priority: .utility) { [storageURL, logger] in
+        saveTask = Task.detached(priority: .utility) { [dataToSave, storageURL, previousTask] in
+            _ = await previousTask?.result
+            let logger = Logger(subsystem: "BrewServicesManager", category: "ServiceLinksStore")
             do {
                 let encoder = JSONEncoder()
                 encoder.outputFormatting = [.sortedKeys, .prettyPrinted]

@@ -1,7 +1,7 @@
 import Foundation
 
 /// Errors that can occur when locating Homebrew.
-enum BrewLocatorError: Error, LocalizedError {
+nonisolated enum BrewLocatorError: Error, LocalizedError {
     case brewNotFound
 
     var errorDescription: String? {

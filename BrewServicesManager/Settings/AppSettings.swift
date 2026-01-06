@@ -23,6 +23,7 @@ final class AppSettings {
         static let debugMode = "debugMode"
         static let autoRefreshInterval = "autoRefreshInterval"
         static let launchAtLogin = "launchAtLogin"
+        static let automaticallyCheckForUpdates = "automaticallyCheckForUpdates"
     }
     
     // MARK: - Settings
@@ -62,6 +63,12 @@ final class AppSettings {
 
     private(set) var launchAtLoginError: LaunchAtLoginError?
 
+    /// Whether to automatically check for app updates.
+    var automaticallyCheckForUpdates: Bool {
+        didSet {
+            defaults.set(automaticallyCheckForUpdates, forKey: Keys.automaticallyCheckForUpdates)
+        }
+    }
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
 
@@ -71,6 +78,8 @@ final class AppSettings {
         debugMode = defaults.bool(forKey: Keys.debugMode)
         autoRefreshInterval = defaults.integer(forKey: Keys.autoRefreshInterval)
         launchAtLogin = defaults.bool(forKey: Keys.launchAtLogin)
+        // Default to true (opt-in by default)
+        automaticallyCheckForUpdates = defaults.object(forKey: Keys.automaticallyCheckForUpdates) as? Bool ?? true
 
         // Sync with actual system state on launch
         Task { @MainActor in

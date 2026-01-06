@@ -1,6 +1,6 @@
 import Foundation
 
-enum ServicesDiskCache {
+nonisolated enum ServicesDiskCache {
     private static let cacheVersion = 2
 
     struct CachedServices: Codable, Sendable {
@@ -35,8 +35,7 @@ enum ServicesDiskCache {
     }
 
     private static func cacheURL(domain: ServiceDomain) -> URL {
-        let applicationSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
-        let base = applicationSupport ?? URL(fileURLWithPath: NSTemporaryDirectory())
+        let base = URL.applicationSupportDirectory
 
         let hostIdentifier = (Bundle.main.bundleIdentifier ?? ProcessInfo.processInfo.processName)
             .replacing("/", with: "_")

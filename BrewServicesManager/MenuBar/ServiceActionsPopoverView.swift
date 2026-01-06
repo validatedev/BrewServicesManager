@@ -7,12 +7,52 @@ struct ServiceActionsPopoverView: View {
     @Environment(ServiceLinksStore.self) private var linksStore
 
     let service: BrewServiceListEntry
-    @Binding var isPresented: Bool
 
     let onAction: (ServiceAction) -> Void
     let onInfo: () -> Void
     let onStopWithOptions: () -> Void
     let onManageLinks: () -> Void
+
+    @Binding var isPresented: Bool
+
+    private var operation: ServiceOperation? {
+        store.serviceOperations[service.id]
+    }
+
+    private var popoverStatusTitle: LocalizedStringKey {
+        switch service.status {
+        case .started:
+            "Running"
+        case .stopped:
+            "Stopped"
+        case .scheduled:
+            "Scheduled"
+        case .none:
+            "Unloaded"
+        case .error:
+            "Error"
+        case .unknown:
+            "Unknown"
+        }
+    }
+
+    private var servicePortsForDisplay: [ServicePort]? {
+        // Get ports from the selected service info if it matches this service
+        guard let selectedInfo = store.selectedServiceInfo,
+              selectedInfo.name == service.name else {
+            return nil
+        }
+        return selectedInfo.detectedPorts
+    }
+
+    private var serviceLinks: [ServiceLink] {
+        linksStore.links(for: service.name)
+    }
+
+    private var canSuggestLinks: Bool {
+        // Show if service is running - we can detect ports
+        service.status == .started
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: .zero) {
@@ -150,10 +190,10 @@ struct ServiceActionsPopoverView: View {
                     onInfo()
                 }
 
-                if let fileURL = service.fileURL {
-                    popoverButton("Open in Finder", icon: "folder", color: .primary) {
-                        AppKitBridge.revealInFinder(fileURL)
-                    }
+            if let fileURL = service.fileURL {
+                popoverButton("Open in Finder", icon: "folder", color: .primary) {
+                    AppKitBridge.revealInFinder(fileURL)
+                }
 
                     popoverButton("Copy File Path", icon: "doc.on.doc", color: .primary) {
                         AppKitBridge.copyToClipboard(fileURL.path())
@@ -162,51 +202,6 @@ struct ServiceActionsPopoverView: View {
             }
             .padding(.vertical, LayoutConstants.compactPadding)
         }
-    }
-
-    private var operation: ServiceOperation? {
-        store.serviceOperations[service.id]
-    }
-
-    private var popoverStatusTitle: LocalizedStringKey {
-        switch service.status {
-        case .started:
-            "Running"
-        case .stopped:
-            "Stopped"
-        case .scheduled:
-            "Scheduled"
-        case .none:
-            "Unloaded"
-        case .error:
-            "Error"
-        case .unknown:
-            "Unknown"
-        }
-    }
-
-    private var servicePortsForDisplay: [ServicePort]? {
-        // Get ports from the selected service info if it matches this service
-        guard let selectedInfo = store.selectedServiceInfo,
-              selectedInfo.name == service.name else {
-            return nil
-        }
-        return selectedInfo.detectedPorts
-    }
-
-    private func portsDescription(_ ports: [ServicePort]) -> String {
-        let portStrings = ports.prefix(3).map { $0.port.formatted(.number.grouping(.never)) }
-        let joined = portStrings.joined(separator: ", ")
-        return ports.count > 3 ? "\(joined) +\(ports.count - 3)" : joined
-    }
-
-    private var serviceLinks: [ServiceLink] {
-        linksStore.links(for: service.name)
-    }
-
-    private var canSuggestLinks: Bool {
-        // Show if service is running - we can detect ports
-        service.status == .started
     }
 
     // MARK: - Popover Button Helper
@@ -229,5 +224,11 @@ struct ServiceActionsPopoverView: View {
             .contentShape(.rect)
         }
         .buttonStyle(.plain)
+    }
+
+    private func portsDescription(_ ports: [ServicePort]) -> String {
+        let portStrings = ports.prefix(3).map { $0.port.formatted(.number.grouping(.never)) }
+        let joined = portStrings.joined(separator: ", ")
+        return ports.count > 3 ? "\(joined) +\(ports.count - 3)" : joined
     }
 }

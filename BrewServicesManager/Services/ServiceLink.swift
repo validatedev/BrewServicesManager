@@ -6,7 +6,7 @@
 import Foundation
 
 /// A user-configured link for a service
-struct ServiceLink: Codable, Hashable, Sendable, Identifiable {
+nonisolated struct ServiceLink: Codable, Hashable, Sendable, Identifiable {
     let id: UUID
     let url: URL
     let label: String?

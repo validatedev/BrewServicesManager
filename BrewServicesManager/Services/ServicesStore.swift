@@ -25,6 +25,7 @@ final class ServicesStore {
     private var restoredCacheDomains: Set<ServiceDomain> = []
     private var lastRefreshByDomain: [ServiceDomain: Date] = [:]
     private var currentDomain: ServiceDomain?
+    private var cacheSaveTask: Task<Void, Never>?
     
     private struct RefreshRequest: Sendable {
         let domain: ServiceDomain
@@ -578,9 +579,19 @@ final class ServicesStore {
         guard !restoredCacheDomains.contains(domain) else { return }
         restoredCacheDomains.insert(domain)
 
-        if let cached = ServicesDiskCache.load(domain: domain) {
-            state = .loaded(cached.services)
-            lastRefresh = cached.lastRefresh
+        Task {
+            let cached = await Task.detached(priority: .utility) {
+                ServicesDiskCache.load(domain: domain)
+            }.value
+
+            guard let cached else { return }
+            guard lastRefreshByDomain[domain] == nil else { return }
+
+            if currentDomain == domain {
+                state = .loaded(cached.services)
+                lastRefresh = cached.lastRefresh
+            }
+
             if let cachedRefresh = cached.lastRefresh {
                 lastRefreshByDomain[domain] = cachedRefresh
             }
@@ -588,10 +599,10 @@ final class ServicesStore {
     }
 
     private func persistServicesCache(services: [BrewServiceListEntry], lastRefresh: Date, domain: ServiceDomain) {
-        Task.detached(priority: .utility) {
-            await MainActor.run {
-                try? ServicesDiskCache.save(services: services, lastRefresh: lastRefresh, domain: domain)
-            }
+        let previousTask = cacheSaveTask
+        cacheSaveTask = Task.detached(priority: .utility) {
+            _ = await previousTask?.result
+            try? ServicesDiskCache.save(services: services, lastRefresh: lastRefresh, domain: domain)
         }
     }
 }

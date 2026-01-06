@@ -6,7 +6,7 @@
 import Foundation
 
 /// Represents a listening port for a service
-struct ServicePort: Codable, Hashable, Sendable, Identifiable {
+nonisolated struct ServicePort: Codable, Hashable, Sendable, Identifiable {
     let port: Int
     let portProtocol: PortProtocol
 

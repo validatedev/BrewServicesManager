@@ -12,30 +12,31 @@ struct MenuBarRootView: View {
     @Environment(AppSettings.self) private var settings
 
     @State private var pendingGlobalAction: GlobalActionType?
+    @State private var route: MenuBarRoute = .main
     @State private var serviceToStop: BrewServiceListEntry?
-    @State private var showingSettings = false
-    @State private var showingServiceInfo: BrewServiceInfoEntry?
-    @State private var managingLinksFor: (service: String, ports: [ServicePort])?
-    
-    var body: some View {
-        let menuContentWidth: CGFloat = if serviceToStop != nil {
-            LayoutConstants.menuWidth
-        } else if showingSettings {
-            LayoutConstants.settingsMenuWidth
-        } else if showingServiceInfo != nil {
-            LayoutConstants.serviceInfoMenuWidth
-        } else if managingLinksFor != nil {
-            LayoutConstants.serviceInfoMenuWidth
-        } else {
-            LayoutConstants.mainMenuWidth
+
+    private var menuContentWidth: CGFloat {
+        if serviceToStop != nil {
+            return LayoutConstants.menuWidth
         }
 
+        return switch route {
+        case .settings:
+            LayoutConstants.settingsMenuWidth
+        case .serviceInfo, .manageLinks:
+            LayoutConstants.serviceInfoMenuWidth
+        case .main:
+            LayoutConstants.mainMenuWidth
+        }
+    }
+
+    var body: some View {
         ZStack {
             // Main content
             MainMenuContentView(
                 onSettings: {
                     withAnimation(.easeInOut(duration: 0.2)) {
-                        showingSettings = true
+                        route = .settings
                     }
                 },
                 onServiceInfo: { service in
@@ -48,7 +49,7 @@ struct MenuBarRootView: View {
                         )
                         if let info = store.selectedServiceInfo {
                             withAnimation(.easeInOut(duration: 0.2)) {
-                                showingServiceInfo = info
+                                route = .serviceInfo(info)
                             }
                         }
                     }
@@ -73,7 +74,7 @@ struct MenuBarRootView: View {
                         }
 
                         withAnimation(.easeInOut(duration: 0.2)) {
-                            managingLinksFor = (service.name, ports)
+                            route = .manageLinks(service: service.name, ports: ports)
                         }
                     }
                 },
@@ -81,36 +82,36 @@ struct MenuBarRootView: View {
                     pendingGlobalAction = action
                 }
             )
-            .opacity(showingSettings || showingServiceInfo != nil || managingLinksFor != nil ? 0 : 1)
+            .opacity(route == .main ? 1 : 0)
             
             // Settings overlay
-            if showingSettings {
+            if route == .settings {
                 SettingsView {
                     withAnimation(.easeInOut(duration: 0.2)) {
-                        showingSettings = false
+                        route = .main
                     }
                 }
                 .transition(.move(edge: .trailing))
             }
             
             // Service Info overlay
-            if let info = showingServiceInfo {
+            if case .serviceInfo(let info) = route {
                 ServiceInfoView(info: info) {
                     withAnimation(.easeInOut(duration: 0.2)) {
-                        showingServiceInfo = nil
+                        route = .main
                     }
                 }
                 .transition(.move(edge: .trailing))
             }
 
             // Service Links Management overlay
-            if let managingLinks = managingLinksFor {
+            if case .manageLinks(let serviceName, let ports) = route {
                 ServiceLinksManagementView(
-                    serviceName: managingLinks.service,
-                    suggestedPorts: managingLinks.ports,
+                    serviceName: serviceName,
+                    suggestedPorts: ports,
                     onDismiss: {
                         withAnimation(.easeInOut(duration: 0.2)) {
-                            managingLinksFor = nil
+                            route = .main
                         }
                     }
                 )

@@ -1,4 +1,4 @@
-struct GlobalOperation: Sendable {
+nonisolated struct GlobalOperation: Sendable {
     var status: GlobalOperationStatus
     var title: String
     var systemImage: String

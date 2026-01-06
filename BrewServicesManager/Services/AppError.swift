@@ -6,7 +6,7 @@
 import Foundation
 
 /// Errors that can occur in the application.
-enum AppError: Error, LocalizedError, Sendable {
+nonisolated enum AppError: Error, LocalizedError, Sendable {
     case brewNotFound
     case brewFailed(exitCode: Int32, stderr: String)
     case jsonDecodingFailed(rawOutput: String, underlyingErrorDescription: String)

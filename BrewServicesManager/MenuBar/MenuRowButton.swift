@@ -34,8 +34,7 @@ struct MenuRowButton: View {
                 
                 if showDisclosure {
                     Image(systemName: "chevron.right")
-                        .font(.caption)
-                        .fontWeight(.semibold)
+                        .font(.caption.weight(.semibold))
                         .foregroundStyle(.tertiary)
                 }
             }

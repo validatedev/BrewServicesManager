@@ -6,7 +6,7 @@
 import Foundation
 
 /// The domain in which services operate.
-enum ServiceDomain: String, CaseIterable, Sendable {
+nonisolated enum ServiceDomain: String, CaseIterable, Sendable {
     /// User-level services (~/Library/LaunchAgents).
     case user
     

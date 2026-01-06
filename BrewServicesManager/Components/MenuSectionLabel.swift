@@ -11,8 +11,7 @@ struct MenuSectionLabel: View {
     
     var body: some View {
         Text(title)
-            .font(.caption2)
-            .fontWeight(.medium)
+            .font(.caption2.weight(.medium))
             .foregroundStyle(.secondary)
             .textCase(.uppercase)
             .padding(.horizontal)

@@ -7,7 +7,7 @@
 import os
 
 /// Executes shell commands and captures their output.
-enum CommandExecutor {
+nonisolated enum CommandExecutor {
     
     /// Runs the executable at the given URL with the specified arguments.
     /// - Parameters:

@@ -9,16 +9,6 @@ import SwiftUI
 struct StatusBadge: View {
     let status: BrewServiceStatus
     
-    var body: some View {
-        Text(status.displayName)
-            .font(.caption2)
-            .bold()
-            .padding(.horizontal, LayoutConstants.statusBadgeHorizontalPadding)
-            .padding(.vertical, LayoutConstants.statusBadgeVerticalPadding)
-            .foregroundStyle(foregroundColor)
-            .background(backgroundColor, in: .capsule)
-    }
-    
     private var foregroundColor: Color {
         switch status {
         case .started:
@@ -45,6 +35,16 @@ struct StatusBadge: View {
         case .unknown:
             .orange.opacity(0.6)
         }
+    }
+
+    var body: some View {
+        Text(status.displayName)
+            .font(.caption2)
+            .bold()
+            .padding(.horizontal, LayoutConstants.statusBadgeHorizontalPadding)
+            .padding(.vertical, LayoutConstants.statusBadgeVerticalPadding)
+            .foregroundStyle(foregroundColor)
+            .background(backgroundColor, in: .capsule)
     }
 }
 

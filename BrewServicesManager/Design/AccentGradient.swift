@@ -45,7 +45,7 @@ extension ShapeStyle where Self == LinearGradient {
 }
 
 #Preview {
-    VStack(spacing: 20) {
+    VStack(spacing: LayoutConstants.previewSpacing) {
         RoundedRectangle(cornerRadius: 4)
             .fill(.accentGradient)
             .frame(height: 4)

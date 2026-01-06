@@ -6,7 +6,7 @@
 import Foundation
 
 /// Controls how long to wait when stopping a service.
-enum StopWaitBehavior: Sendable, Equatable {
+nonisolated enum StopWaitBehavior: Sendable, Equatable {
     /// Don't wait for the service to stop.
     case noWait
     
@@ -14,12 +14,12 @@ enum StopWaitBehavior: Sendable, Equatable {
     case maxWait(seconds: Int)
     
     /// The default wait behavior (60 seconds).
-    nonisolated static var `default`: StopWaitBehavior {
+    static var `default`: StopWaitBehavior {
         .maxWait(seconds: 60)
     }
     
     /// Arguments to pass to brew for this behavior.
-    nonisolated var arguments: [String] {
+    var arguments: [String] {
         switch self {
         case .noWait:
             ["--no-wait"]
@@ -28,4 +28,3 @@ enum StopWaitBehavior: Sendable, Equatable {
         }
     }
 }
-

@@ -6,7 +6,7 @@
 import Foundation
 
 /// Represents the status of a Homebrew service.
-enum BrewServiceStatus: String, Codable, Sendable {
+nonisolated enum BrewServiceStatus: String, Codable, Sendable {
     case started
     case stopped
     case scheduled
@@ -22,7 +22,7 @@ enum BrewServiceStatus: String, Codable, Sendable {
     }
     
     /// A human-readable display name.
-    nonisolated var displayName: String {
+    var displayName: String {
         switch self {
         case .started: "Running"
         case .stopped: "Stopped"
@@ -34,7 +34,7 @@ enum BrewServiceStatus: String, Codable, Sendable {
     }
     
     /// SF Symbol name for the status indicator.
-    nonisolated var symbolName: String {
+    var symbolName: String {
         switch self {
         case .started: "circle.fill"
         case .stopped: "circle"
@@ -46,7 +46,7 @@ enum BrewServiceStatus: String, Codable, Sendable {
     }
     
     /// Whether this status indicates the service is actively running.
-    nonisolated var isActive: Bool {
+    var isActive: Bool {
         switch self {
         case .started, .scheduled: true
         default: false

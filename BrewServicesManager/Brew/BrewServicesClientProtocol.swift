@@ -1,6 +1,6 @@
 import Foundation
 
-protocol BrewServicesClientProtocol: Sendable {
+nonisolated protocol BrewServicesClientProtocol: Sendable {
     func listServices(
         domain: ServiceDomain,
         sudoServiceUser: String?,

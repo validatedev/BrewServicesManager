@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>Brew Services Manager Updates</title>
+    <link>https://github.com/validatedev/BrewServicesManager</link>
+    <description>Most recent updates to Brew Services Manager</description>
+    <language>en</language>
+
+    <item>
+      <title>Version 1.1.0</title>
+      <sparkle:version>3</sparkle:version>
+      <sparkle:shortVersionString>1.1.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <pubDate>Wed, 01 Jan 2026 00:00:00 +0000</pubDate>
+      <enclosure
+        url="https://github.com/validatedev/BrewServicesManager/releases/download/v1.1.0/BrewServicesManager-1.1.0.dmg"
+        sparkle:edSignature="IRX1Z8z+2bqc6mj2RXq7trzJH65EMQ1TN0YckoaiPI6cP+8FrRJ4r8B9th+crVJXmYpFhbEElXX96Xn5TndBAg=="
+        length="4164486"
+        type="application/octet-stream" />
+    </item>
+
+    <item>
+      <title>Version 1.1.1</title>
+      <sparkle:version>4</sparkle:version>
+      <sparkle:shortVersionString>1.1.1</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <pubDate>Thu, 01 Jan 2026 15:23:20 +0300</pubDate>
+      <enclosure
+        url="https://github.com/validatedev/BrewServicesManager/releases/download/v1.1.1/BrewServicesManager-1.1.1.dmg"
+        sparkle:edSignature="KjrKsfRJyLeuHsuiCSl/s6vEV9nbZHt2ZUcx+25kM3iJRhvq2D2sP3nnFkanf7IYQOmGO2UJDRlmrrLyOiaeCQ=="
+        length="4167410"
+        type="application/octet-stream" />
+    </item>
+
+    <item>
+      <title>Version 1.1.2</title>
+      <sparkle:version>5</sparkle:version>
+      <sparkle:shortVersionString>1.1.2</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <pubDate>Thu, 01 Jan 2026 16:18:07 +0300</pubDate>
+      <enclosure
+        url="https://github.com/validatedev/BrewServicesManager/releases/download/v1.1.2/BrewServicesManager-1.1.2.dmg"
+        sparkle:edSignature="dzskszIbg0oF6Crz03Tf8sPEVaGTthf9yTF8RxvZemrY2G4vsEK2wx4DqQQ80CNRImppe/sMI++toRMoL33/DQ=="
+        length="4167440"
+        type="application/octet-stream" />
+    </item>
+
+    <item>
+      <title>Version 1.1.3</title>
+      <sparkle:version>7</sparkle:version>
+      <sparkle:shortVersionString>1.1.3</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <pubDate>Sun, 04 Jan 2026 00:07:21 +0300</pubDate>
+      <enclosure
+        url="https://github.com/validatedev/BrewServicesManager/releases/download/v1.1.3/BrewServicesManager-1.1.3.dmg"
+        sparkle:edSignature="CIfuRFgXVsjotEwTzMY8awY0eeH2+jnSi/Crf2q7RUTDp662NwmHp7tteV7zS39JYTVz2RE04yRbe8qQt6/FBw=="
+        length="4189653"
+        type="application/octet-stream" />
+    </item>
+
+  </channel>
+</rss>

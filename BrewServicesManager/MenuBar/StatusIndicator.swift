@@ -10,28 +10,7 @@ struct StatusIndicator: View {
     let status: BrewServiceStatus
     
     @State private var isPulsing = false
-    
-    var body: some View {
-        Image(systemName: status.symbolName)
-            .foregroundStyle(color)
-            .shadow(color: glowColor, radius: glowRadius)
-            .scaleEffect(isPulsing && status == .started ? 1.15 : 1.0)
-            .animation(
-                status == .started 
-                    ? .easeInOut(duration: 1.0).repeatForever(autoreverses: true) 
-                    : .default,
-                value: isPulsing
-            )
-            .onAppear {
-                if status == .started {
-                    isPulsing = true
-                }
-            }
-            .onChange(of: status) {
-                isPulsing = status == .started
-            }
-    }
-    
+
     private var color: Color {
         switch status {
         case .started:
@@ -66,6 +45,27 @@ struct StatusIndicator: View {
             0
         }
     }
+
+    var body: some View {
+        Image(systemName: status.symbolName)
+            .foregroundStyle(color)
+            .shadow(color: glowColor, radius: glowRadius)
+            .scaleEffect(isPulsing && status == .started ? 1.15 : 1.0)
+            .animation(
+                status == .started
+                    ? .easeInOut(duration: 1.0).repeatForever(autoreverses: true)
+                    : .default,
+                value: isPulsing
+            )
+            .onAppear {
+                if status == .started {
+                    isPulsing = true
+                }
+            }
+            .onChange(of: status) { _, newStatus in
+                isPulsing = newStatus == .started
+            }
+    }
 }
 
 #Preview {
@@ -79,4 +79,3 @@ struct StatusIndicator: View {
     }
     .padding()
 }
-
