@@ -1,4 +1,4 @@
-# BrewServicesManager
+# Brew Services Manager
 
 <p align="center">
   <img src="assets/BrewServicesManager-icon.png" alt="BrewServicesManager Icon" width="200" height="200">
@@ -56,7 +56,7 @@ A macOS menu bar app for managing Homebrew services. Start, stop, and restart se
 ### Option 1: Download Pre-built Release
 
 1. Download the latest `.dmg` from the [Releases](https://github.com/validatedev/BrewServicesManager/releases) page
-2. Open the DMG and drag **BrewServicesManager** to your Applications folder
+2. Open the DMG and drag **Brew Services Manager** to your Applications folder
 3. Launch the app from Applications or Spotlight
 
 ### Option 2: Build from Source
@@ -91,7 +91,7 @@ A macOS menu bar app for managing Homebrew services. Start, stop, and restart se
 
 ### Getting Started
 
-1. **Launch the App** — BrewServicesManager runs as a menu bar-only application. Look for the mug icon (☕) in your menu bar.
+1. **Launch the App** — Brew Services Manager runs as a menu bar-only application. Look for the mug icon (☕) in your menu bar.
 
 2. **View Services** — Click the menu bar icon to see all your Homebrew services and their current status.
 
@@ -133,7 +133,7 @@ Links are saved automatically and persist across app restarts.
 
 ### Service Domains
 
-BrewServicesManager supports two service domains:
+Brew Services Manager supports two service domains:
 
 | Domain | Description | Privileges |
 |--------|-------------|------------|
@@ -204,7 +204,7 @@ xcodebuild -scheme BrewServicesManager test
 ### Common Issues
 
 <details>
-<summary><strong>BrewServicesManager can't find Homebrew</strong></summary>
+<summary><strong>Brew Services Manager can't find Homebrew</strong></summary>
 
 Ensure Homebrew is installed and accessible:
 ```bash
@@ -215,7 +215,7 @@ which brew
 echo $PATH
 ```
 
-BrewServicesManager searches for Homebrew in:
+Brew Services Manager searches for Homebrew in:
 - `/opt/homebrew/bin/brew` (Apple Silicon)
 - `/usr/local/bin/brew` (Intel)
 
@@ -254,7 +254,7 @@ lsof -nP -iTCP -sTCP:LISTEN | grep <service-name>
 <summary><strong>System authentication dialog appears but can't be clicked</strong></summary>
 
 This issue has been fixed in recent versions. If you encounter this:
-1. Update to the latest version of BrewServicesManager
+1. Update to the latest version of Brew Services Manager
 2. The authentication dialog should now accept mouse input properly
 3. If issues persist, you can still use keyboard navigation (Tab to move between fields, Space/Enter to click buttons)
 

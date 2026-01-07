@@ -443,7 +443,7 @@
 				);
 				MARKETING_VERSION = 1.1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.mertcandemir.BrewServicesManager;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Brew Services Manager";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -478,7 +478,7 @@
 				);
 				MARKETING_VERSION = 1.1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.mertcandemir.BrewServicesManager;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Brew Services Manager";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -506,7 +506,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BrewServicesManager.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BrewServicesManager";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Brew Services Manager.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Brew Services Manager";
 			};
 			name = Debug;
 		};
@@ -527,7 +527,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BrewServicesManager.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BrewServicesManager";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Brew Services Manager.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Brew Services Manager";
 			};
 			name = Release;
 		};

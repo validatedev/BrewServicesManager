@@ -34,7 +34,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 APPCAST_FILE="$PROJECT_ROOT/appcast.xml"
 CHANGELOG_FILE="$PROJECT_ROOT/CHANGELOG.md"
-APP_NAME="BrewServicesManager"
+PROJECT_NAME="BrewServicesManager"
+PRODUCT_NAME="Brew Services Manager"
 GITHUB_REPO="validatedev/BrewServicesManager"
 NOTARIZATION_PROFILE="BrewServicesManager-Notarization"
 CODE_SIGN_IDENTITY="Developer ID Application: Mert Can Demir (UUW59LGK2E)"
@@ -81,14 +82,14 @@ update_version() {
 
     # Update MARKETING_VERSION in project.pbxproj
     sed -i '' "s/MARKETING_VERSION = [^;]*;/MARKETING_VERSION = $version;/g" \
-        "$PROJECT_ROOT/$APP_NAME.xcodeproj/project.pbxproj"
+        "$PROJECT_ROOT/$PROJECT_NAME.xcodeproj/project.pbxproj"
 
     # Increment CURRENT_PROJECT_VERSION (build number)
-    local current_build=$(grep -m1 'CURRENT_PROJECT_VERSION = ' "$PROJECT_ROOT/$APP_NAME.xcodeproj/project.pbxproj" | grep -o '[0-9]*')
+    local current_build=$(grep -m1 'CURRENT_PROJECT_VERSION = ' "$PROJECT_ROOT/$PROJECT_NAME.xcodeproj/project.pbxproj" | grep -o '[0-9]*')
     local new_build=$((current_build + 1))
 
     sed -i '' "s/CURRENT_PROJECT_VERSION = [^;]*;/CURRENT_PROJECT_VERSION = $new_build;/g" \
-        "$PROJECT_ROOT/$APP_NAME.xcodeproj/project.pbxproj"
+        "$PROJECT_ROOT/$PROJECT_NAME.xcodeproj/project.pbxproj"
 
     echo "Version: $version (build $new_build)"
 }
@@ -98,8 +99,8 @@ build_app() {
 
     local build_dir="$PROJECT_ROOT/build"
 
-    xcodebuild -project "$PROJECT_ROOT/$APP_NAME.xcodeproj" \
-        -scheme "$APP_NAME" \
+    xcodebuild -project "$PROJECT_ROOT/$PROJECT_NAME.xcodeproj" \
+        -scheme "$PROJECT_NAME" \
         -configuration Release \
         CODE_SIGN_IDENTITY="$CODE_SIGN_IDENTITY" \
         CODE_SIGN_STYLE=Manual \
@@ -108,7 +109,7 @@ build_app() {
         -derivedDataPath "$build_dir" \
         clean build
 
-    local app_path="$build_dir/Build/Products/Release/$APP_NAME.app"
+    local app_path="$build_dir/Build/Products/Release/$PRODUCT_NAME.app"
 
     # Re-sign Sparkle framework components for notarization
     echo "Signing Sparkle framework for notarization..."
@@ -178,7 +179,7 @@ notarize_app() {
 create_dmg() {
     local app_path="$1"
     local dmg_path="$2"
-    local volume_name="$APP_NAME"
+    local volume_name="$PRODUCT_NAME"
 
     echo "Creating DMG..."
 
@@ -482,7 +483,7 @@ fi
 
 VERSION="$1"
 BUILD_DIR="$PROJECT_ROOT/build"
-APP_PATH="$BUILD_DIR/Build/Products/Release/$APP_NAME.app"
+APP_PATH="$BUILD_DIR/Build/Products/Release/$PRODUCT_NAME.app"
 CASK_FILE_PATH="$PROJECT_ROOT/Casks/brew-services-manager.rb"
 HOMEBREW_CASK_UPDATED="no"
 HOMEBREW_PR_SUBMITTED="no"
@@ -515,7 +516,7 @@ fi
 OUTPUT_DIR="$PROJECT_ROOT/releases"
 mkdir -p "$OUTPUT_DIR"
 
-DMG_NAME="${APP_NAME}-${VERSION}.dmg"
+DMG_NAME="${PROJECT_NAME}-${VERSION}.dmg"
 DMG_PATH="$OUTPUT_DIR/$DMG_NAME"
 DMG_URL="https://github.com/$GITHUB_REPO/releases/download/v$VERSION/$DMG_NAME"
 
@@ -563,7 +564,7 @@ fi
 # Commit and tag
 echo ""
 echo "The following files have been modified:"
-git status --short "$APPCAST_FILE" "$CHANGELOG_FILE" "$PROJECT_ROOT/$APP_NAME.xcodeproj/project.pbxproj" 2>/dev/null || true
+git status --short "$APPCAST_FILE" "$CHANGELOG_FILE" "$PROJECT_ROOT/$PROJECT_NAME.xcodeproj/project.pbxproj" 2>/dev/null || true
 if [[ "$HOMEBREW_CASK_UPDATED" == "yes" ]]; then
     git status --short "$CASK_FILE_PATH" 2>/dev/null || true
 fi
@@ -574,7 +575,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     # Stage release files
     git add "$APPCAST_FILE"
     [ -f "$CHANGELOG_FILE" ] && git add "$CHANGELOG_FILE"
-    git add "$PROJECT_ROOT/$APP_NAME.xcodeproj/project.pbxproj"
+    git add "$PROJECT_ROOT/$PROJECT_NAME.xcodeproj/project.pbxproj"
     if [[ "$HOMEBREW_CASK_UPDATED" == "yes" ]]; then
         git add "$CASK_FILE_PATH"
     fi

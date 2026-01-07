@@ -15,7 +15,7 @@ cask "brew-services-manager" do
   auto_updates true
   depends_on macos: ">= :sequoia"
 
-  app "BrewServicesManager.app"
+  app "Brew Services Manager.app"
 
   zap trash: [
     "~/Library/Application Support/dev.mertcandemir.BrewServicesManager",
