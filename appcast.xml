@@ -58,5 +58,18 @@
         type="application/octet-stream" />
     </item>
 
+    <item>
+      <title>Version 1.1.4</title>
+      <sparkle:version>8</sparkle:version>
+      <sparkle:shortVersionString>1.1.4</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <pubDate>Wed, 07 Jan 2026 23:19:26 +0300</pubDate>
+      <enclosure
+        url="https://github.com/validatedev/BrewServicesManager/releases/download/v1.1.4/BrewServicesManager-1.1.4.dmg"
+        sparkle:edSignature="66PdXC20RPJxw9QielApm+8AmipPK2+xjI93ppTvKRJ3Ajs4fm4zgXgbUHblY+E3a5kFo0NOwA/IujhjpBt8Cw=="
+        length="4213968"
+        type="application/octet-stream" />
+    </item>
+
   </channel>
 </rss>
