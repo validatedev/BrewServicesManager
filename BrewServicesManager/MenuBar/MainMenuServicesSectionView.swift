@@ -29,7 +29,8 @@ struct MainMenuServicesSectionView: View {
                 } else {
                     VStack(alignment: .leading, spacing: LayoutConstants.compactSpacing) {
                         MenuSectionLabel(title: "Services")
-                        
+
+                        // Pinned: Operation status (always visible)
                         if let operation = store.globalOperation {
                             HStack {
                                 if operation.status == .running {
@@ -53,6 +54,7 @@ struct MainMenuServicesSectionView: View {
                             .padding(.top, LayoutConstants.compactPadding)
                         }
 
+                        // Pinned: Error banner (always visible)
                         if store.nonFatalError != nil {
                             HStack(alignment: .firstTextBaseline) {
                                 Label("Some operations failed", systemImage: "exclamationmark.triangle.fill")
@@ -74,31 +76,21 @@ struct MainMenuServicesSectionView: View {
                             .padding(.top, LayoutConstants.compactPadding)
                         }
 
-                        ForEach(services) { service in
-                            ServiceMenuItemView(
-                                service: service,
-                                onAction: { action in
-                                    Task {
-                                        await store.performAction(
-                                            action,
-                                            on: service,
-                                            domain: settings.selectedDomain,
-                                            sudoServiceUser: settings.validatedSudoServiceUser,
-                                            debugMode: settings.debugMode
-                                        )
+                        // Service rows - scrollable only when exceeding max visible count
+                        if services.count > LayoutConstants.maxVisibleServices {
+                            ScrollView {
+                                LazyVStack(alignment: .leading, spacing: .zero) {
+                                    ForEach(services) { service in
+                                        serviceRow(for: service)
                                     }
-                                },
-                                onInfo: {
-                                    onServiceInfo(service)
-                                },
-                                onStopWithOptions: {
-                                    onStopWithOptions(service)
-                                },
-                                onManageLinks: {
-                                    onManageLinks(service)
                                 }
-                            )
-                            .padding(.horizontal)
+                            }
+                            .frame(height: LayoutConstants.servicesListMaxHeight)
+                            .scrollIndicators(.automatic)
+                        } else {
+                            ForEach(services) { service in
+                                serviceRow(for: service)
+                            }
                         }
                     }
                     .padding(.vertical, LayoutConstants.compactPadding)
@@ -108,6 +100,33 @@ struct MainMenuServicesSectionView: View {
                 ServiceErrorView(error: error, copyDiagnostics: store.copyDiagnosticsToClipboard)
             }
         }
-        .fixedSize(horizontal: false, vertical: true)
+    }
+
+    @ViewBuilder
+    private func serviceRow(for service: BrewServiceListEntry) -> some View {
+        ServiceMenuItemView(
+            service: service,
+            onAction: { action in
+                Task {
+                    await store.performAction(
+                        action,
+                        on: service,
+                        domain: settings.selectedDomain,
+                        sudoServiceUser: settings.validatedSudoServiceUser,
+                        debugMode: settings.debugMode
+                    )
+                }
+            },
+            onInfo: {
+                onServiceInfo(service)
+            },
+            onStopWithOptions: {
+                onStopWithOptions(service)
+            },
+            onManageLinks: {
+                onManageLinks(service)
+            }
+        )
+        .padding(.horizontal)
     }
 }
