@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Service Info panel now opens instantly with a loading state instead of blocking on data fetch
+- Removed pulsing animation from status indicators for improved performance
+
 ## [1.1.5] - 2026-01-07
 
 ### Changed

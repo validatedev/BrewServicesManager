@@ -40,18 +40,8 @@ struct MenuBarRootView: View {
                     }
                 },
                 onServiceInfo: { service in
-                    Task {
-                        await store.fetchServiceInfoWithPorts(
-                            service.name,
-                            domain: settings.selectedDomain,
-                            sudoServiceUser: settings.validatedSudoServiceUser,
-                            debugMode: settings.debugMode
-                        )
-                        if let info = store.selectedServiceInfo {
-                            withAnimation(.easeInOut(duration: 0.2)) {
-                                route = .serviceInfo(info)
-                            }
-                        }
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        route = .serviceInfo(service.name)
                     }
                 },
                 onStopWithOptions: { service in
@@ -95,8 +85,8 @@ struct MenuBarRootView: View {
             }
             
             // Service Info overlay
-            if case .serviceInfo(let info) = route {
-                ServiceInfoView(info: info) {
+            if case .serviceInfo(let serviceName) = route {
+                ServiceInfoView(serviceName: serviceName) {
                     withAnimation(.easeInOut(duration: 0.2)) {
                         route = .main
                     }

@@ -457,10 +457,7 @@ create_github_release() {
 
     local release_notes="## What's New
 
-$changelog
-
----
-*This release includes automatic updates via Sparkle.*"
+$changelog"
 
     gh release create "v$version" \
         --repo "$GITHUB_REPO" \

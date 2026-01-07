@@ -5,11 +5,9 @@
 
 import SwiftUI
 
-/// Displays a status indicator icon for a service with subtle animations.
+/// Displays a status indicator icon for a service.
 struct StatusIndicator: View {
     let status: BrewServiceStatus
-    
-    @State private var isPulsing = false
 
     private var color: Color {
         switch status {
@@ -25,7 +23,7 @@ struct StatusIndicator: View {
             .orange
         }
     }
-    
+
     private var glowColor: Color {
         switch status {
         case .started:
@@ -36,7 +34,7 @@ struct StatusIndicator: View {
             .clear
         }
     }
-    
+
     private var glowRadius: CGFloat {
         switch status {
         case .started, .error:
@@ -50,21 +48,6 @@ struct StatusIndicator: View {
         Image(systemName: status.symbolName)
             .foregroundStyle(color)
             .shadow(color: glowColor, radius: glowRadius)
-            .scaleEffect(isPulsing && status == .started ? 1.15 : 1.0)
-            .animation(
-                status == .started
-                    ? .easeInOut(duration: 1.0).repeatForever(autoreverses: true)
-                    : .default,
-                value: isPulsing
-            )
-            .onAppear {
-                if status == .started {
-                    isPulsing = true
-                }
-            }
-            .onChange(of: status) { _, newStatus in
-                isPulsing = newStatus == .started
-            }
     }
 }
 
