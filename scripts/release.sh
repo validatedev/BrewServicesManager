@@ -389,6 +389,48 @@ update_homebrew_cask() {
     echo "Updated Homebrew cask to version $version with SHA256 $sha256_checksum"
 }
 
+update_tap_repo() {
+    local version="$1"
+    local tap_repo="validatedev/homebrew-tap"
+    local cask_source="$PROJECT_ROOT/Casks/brew-services-manager.rb"
+
+    if [ ! -f "$cask_source" ]; then
+        echo "Error: Cask file not found: $cask_source"
+        return 1
+    fi
+
+    if ! command -v gh &> /dev/null; then
+        echo "GitHub CLI (gh) not installed. Skipping tap update."
+        echo "Install with: brew install gh"
+        return 1
+    fi
+
+    echo "Updating personal tap ($tap_repo)..."
+
+    local tap_dir=$(mktemp -d)
+    if ! git clone "git@github.com:$tap_repo.git" "$tap_dir" 2>/dev/null; then
+        echo "Error: Failed to clone tap repository"
+        rm -rf "$tap_dir"
+        return 1
+    fi
+
+    mkdir -p "$tap_dir/Casks"
+    cp "$cask_source" "$tap_dir/Casks/"
+
+    cd "$tap_dir"
+    git add Casks/brew-services-manager.rb
+    if git diff --cached --quiet; then
+        echo "Tap already up to date."
+    else
+        git commit -m "chore: update brew-services-manager to $version"
+        git push origin main
+        echo "Personal tap updated to $version."
+    fi
+
+    cd "$PROJECT_ROOT"
+    rm -rf "$tap_dir"
+}
+
 submit_homebrew_pr() {
     local version="$1"
 
@@ -483,6 +525,7 @@ BUILD_DIR="$PROJECT_ROOT/build"
 APP_PATH="$BUILD_DIR/Build/Products/Release/$PRODUCT_NAME.app"
 CASK_FILE_PATH="$PROJECT_ROOT/Casks/brew-services-manager.rb"
 HOMEBREW_CASK_UPDATED="no"
+HOMEBREW_TAP_UPDATED="no"
 HOMEBREW_PR_SUBMITTED="no"
 
 # Update version in Xcode project
@@ -558,6 +601,18 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     fi
 fi
 
+# Update personal tap
+echo ""
+read -p "Update personal Homebrew tap (validatedev/homebrew-tap)? (y/n) " -n 1 -r
+echo ""
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    if update_tap_repo "$VERSION"; then
+        HOMEBREW_TAP_UPDATED="yes"
+    else
+        echo "Personal tap update failed."
+    fi
+fi
+
 # Commit and tag
 echo ""
 echo "The following files have been modified:"
@@ -625,6 +680,11 @@ if [[ "$HOMEBREW_CASK_UPDATED" == "yes" ]]; then
     echo "  Cask file updated: $CASK_FILE_PATH"
 else
     echo "  Cask file updated: no"
+fi
+if [[ "$HOMEBREW_TAP_UPDATED" == "yes" ]]; then
+    echo "  Personal tap: Updated"
+else
+    echo "  Personal tap: Not updated"
 fi
 if [[ "$HOMEBREW_PR_SUBMITTED" == "yes" ]]; then
     echo "  PR status: Submitted"

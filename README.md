@@ -53,13 +53,19 @@ A macOS menu bar app for managing Homebrew services. Start, stop, and restart se
 
 ## Installation
 
-### Option 1: Download Pre-built Release
+### Option 1: Install via Homebrew
+
+```bash
+brew install --cask validatedev/tap/brew-services-manager
+```
+
+### Option 2: Download Pre-built Release
 
 1. Download the latest `.dmg` from the [Releases](https://github.com/validatedev/BrewServicesManager/releases) page
 2. Open the DMG and drag **Brew Services Manager** to your Applications folder
 3. Launch the app from Applications or Spotlight
 
-### Option 2: Build from Source
+### Option 3: Build from Source
 
 1. Clone the repository:
    ```bash
