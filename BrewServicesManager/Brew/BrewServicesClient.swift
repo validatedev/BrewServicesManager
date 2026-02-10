@@ -16,7 +16,9 @@ actor BrewServicesClient: BrewServicesClientProtocol {
     
     /// Environment variables to pass to brew commands.
     private let environment: [String: String] = [
-        "HOMEBREW_NO_AUTO_UPDATE": "1"  // Prevent auto-update during JSON commands
+        "HOMEBREW_NO_AUTO_UPDATE": "1",       // Prevent auto-update before commands
+        "HOMEBREW_NO_INSTALL_FROM_API": "1",  // Use local keg data instead of fetching from API (enables offline use)
+        "HOMEBREW_NO_ANALYTICS": "1",         // Prevent background telemetry network calls
     ]
     
     private func mapExecutionError(_ error: Error) -> Error {
