@@ -9,12 +9,14 @@ import SwiftUI
 /// Uses Liquid Glass on macOS 26+, falls back to materials on earlier versions.
 struct SectionContainerModifier: ViewModifier {
     func body(content: Content) -> some View {
+        // An explicit shape is required: `glassEffect()` defaults to a capsule,
+        // which rounds tall cards into pills and clips their content (issue #6).
+        let shape = RoundedRectangle(cornerRadius: LayoutConstants.sectionContainerCornerRadius)
+
         if #available(macOS 26, *) {
-            content.glassEffect()
+            content.glassEffect(.regular, in: shape)
         } else {
-            content
-                .background(.regularMaterial, in: .rect(cornerRadius: LayoutConstants.sectionContainerCornerRadius))
-                .padding(.horizontal, LayoutConstants.sectionContainerHorizontalPadding)
+            content.background(.regularMaterial, in: shape)
         }
     }
 }

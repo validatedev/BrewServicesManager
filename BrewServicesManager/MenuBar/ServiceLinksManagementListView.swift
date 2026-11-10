@@ -19,32 +19,27 @@ struct ServiceLinksManagementListView: View {
         linksStore.links(for: serviceName)
     }
 
+    private var suggestions: [ServiceLinkSuggestion] {
+        ServiceLinkSuggestion.suggestions(for: suggestedPorts)
+    }
+
     var body: some View {
         VStack(spacing: .zero) {
-            PanelHeaderView(title: "Service Links", onBack: onDismiss)
+            PanelHeaderView(title: Text("Service Links"), onBack: onDismiss)
 
             Divider()
 
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: LayoutConstants.compactPadding) {
                     // Suggestions section
-                    if !suggestedPorts.isEmpty && links.isEmpty {
+                    if !suggestions.isEmpty && links.isEmpty {
                         PanelSectionCardView(
                             title: "Suggestions",
                             subtitle: "Based on detected ports"
                         ) {
-                            ForEach(suggestedPorts.prefix(5)) { port in
-                                if let suggestedURL = port.suggestedURL {
-                                    ServiceLinkSuggestionRow(
-                                        url: suggestedURL,
-                                        port: port,
-                                        onAdd: {
-                                            linksStore.addLink(
-                                                ServiceLink(url: suggestedURL),
-                                                to: serviceName
-                                            )
-                                        }
-                                    )
+                            ForEach(suggestions) { suggestion in
+                                ServiceLinkSuggestionRow(suggestion: suggestion) {
+                                    linksStore.addLink(ServiceLink(url: suggestion.url), to: serviceName)
                                 }
                             }
                         }
@@ -75,9 +70,7 @@ struct ServiceLinksManagementListView: View {
                     }
 
                     // Add button
-                    Button("Add Custom Link", systemImage: "plus.circle") {
-                        onAddLink()
-                    }
+                    Button("Add Custom Link", systemImage: "plus.circle", action: onAddLink)
                     .buttonStyle(.borderless)
                     .padding(.horizontal, LayoutConstants.headerVerticalPadding)
                 }

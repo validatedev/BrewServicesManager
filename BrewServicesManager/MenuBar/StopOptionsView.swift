@@ -46,27 +46,27 @@ struct StopOptionsView: View {
             
             HStack {
                 Spacer()
-                Button("Cancel", role: .cancel) {
-                    onCancel()
-                }
+                Button("Cancel", role: .cancel, action: onCancel)
                 .keyboardShortcut(.cancelAction)
                 
-                Button("Stop") {
-                    let waitBehavior: StopWaitBehavior = useNoWait ? .noWait : .maxWait(seconds: maxWaitSeconds)
-                    onStop(keepRegistered, waitBehavior)
-                }
+                Button("Stop", action: confirmStop)
                 .keyboardShortcut(.defaultAction)
             }
         }
         .padding()
         .frame(width: LayoutConstants.menuWidth)
     }
+
+    private func confirmStop() {
+        let waitBehavior: StopWaitBehavior = useNoWait ? .noWait : .maxWait(seconds: maxWaitSeconds)
+        onStop(keepRegistered, waitBehavior)
+    }
 }
 
 #Preview {
     StopOptionsView(
         serviceName: "postgresql@16",
-        onStop: { keep, wait in print("Stop with keep=\(keep), wait=\(wait)") },
-        onCancel: { print("Cancelled") }
+        onStop: { _, _ in },
+        onCancel: { }
     )
 }

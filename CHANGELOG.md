@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Settings is now a native grouped form with descriptions under each option, split into Services, Launch, Updates, Advanced, and About sections, and a wider panel (#6)
+- More space around the Quit row at the bottom of the menu (#6)
+- Quieter colors: the header accent bar is solid amber, status icons no longer glow, the status pill has a neutral background, and action icons in the More Actions menu are grey except Kill
+- Section labels in the menu use sentence case instead of uppercase
+- The status of an unloaded service reads "Not Loaded" everywhere
+- Empty and error states use the standard macOS "unavailable" layout
+- Panels fade instead of sliding when Reduce Motion is on
+- VoiceOver reads service status icons and header status
+- README instructions match the current menu and Settings
+
+### Fixed
+
+- Section cards on macOS 26 no longer render as clipped pill shapes (#6)
+- Link URLs pasted with surrounding spaces are accepted instead of rejected
+- Unit tests build again after the app rename
+
 ## [1.1.8] - 2026-02-10
 
 ### Fixed

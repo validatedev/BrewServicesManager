@@ -41,7 +41,7 @@ final class AppUpdaterDelegateTests: XCTestCase {
     func testInitialLaunchAllowsModal() {
         // First check during initial launch should allow Sparkle to show modal
         let shouldShowModal = delegate.standardUserDriverShouldHandleShowingScheduledUpdate(
-            MockAppcastItem(),
+            SUAppcastItem.empty(),
             andInImmediateFocus: false
         )
 
@@ -51,13 +51,13 @@ final class AppUpdaterDelegateTests: XCTestCase {
     func testSubsequentChecksUseGentleReminders() {
         // First check (consumes initial launch flag)
         _ = delegate.standardUserDriverShouldHandleShowingScheduledUpdate(
-            MockAppcastItem(),
+            SUAppcastItem.empty(),
             andInImmediateFocus: false
         )
 
         // Second check should use gentle reminders (no modal)
         let shouldShowModal = delegate.standardUserDriverShouldHandleShowingScheduledUpdate(
-            MockAppcastItem(),
+            SUAppcastItem.empty(),
             andInImmediateFocus: false
         )
 
@@ -67,11 +67,7 @@ final class AppUpdaterDelegateTests: XCTestCase {
     func testUpdateAvailabilityCallbackInvokedWithTrue() {
         // When Sparkle won't handle showing update (handleShowingUpdate = false),
         // delegate should notify that update is available
-        delegate.standardUserDriverWillHandleShowingUpdate(
-            false,
-            forUpdate: MockAppcastItem(),
-            state: SPUUserUpdateState()
-        )
+        delegate.updateWillBeShown(handledBySparkle: false)
 
         XCTAssertTrue(updateAvailabilityCallbackInvoked, "Callback should be invoked")
         XCTAssertEqual(updateAvailabilityValue, true, "Callback should indicate update is available")
@@ -80,17 +76,13 @@ final class AppUpdaterDelegateTests: XCTestCase {
     func testUpdateAvailabilityNotInvokedWhenSparkleHandles() {
         // When Sparkle will handle showing update (handleShowingUpdate = true),
         // delegate should not invoke callback (Sparkle shows modal, no gentle reminder needed)
-        delegate.standardUserDriverWillHandleShowingUpdate(
-            true,
-            forUpdate: MockAppcastItem(),
-            state: SPUUserUpdateState()
-        )
+        delegate.updateWillBeShown(handledBySparkle: true)
 
         XCTAssertFalse(updateAvailabilityCallbackInvoked, "Callback should not be invoked when Sparkle handles update")
     }
 
     func testUserViewedCallbackInvoked() {
-        delegate.standardUserDriverDidReceiveUserAttention(forUpdate: MockAppcastItem())
+        delegate.standardUserDriverDidReceiveUserAttention(forUpdate: SUAppcastItem.empty())
 
         XCTAssertTrue(userViewedCallbackInvoked, "User viewed callback should be invoked")
     }
@@ -105,28 +97,16 @@ final class AppUpdaterDelegateTests: XCTestCase {
     func testInitialLaunchTimesOut() async throws {
         // First check should allow modal
         let firstCheck = delegate.standardUserDriverShouldHandleShowingScheduledUpdate(
-            MockAppcastItem(),
+            SUAppcastItem.empty(),
             andInImmediateFocus: false
         )
         XCTAssertTrue(firstCheck, "First check should allow modal")
 
         // Already used up initial launch flag, so second check should use gentle reminder
         let secondCheck = delegate.standardUserDriverShouldHandleShowingScheduledUpdate(
-            MockAppcastItem(),
+            SUAppcastItem.empty(),
             andInImmediateFocus: false
         )
         XCTAssertFalse(secondCheck, "Second check should use gentle reminder")
-    }
-}
-
-// MARK: - Mock SUAppcastItem
-
-/// Minimal mock implementation of SUAppcastItem for testing.
-/// SUAppcastItem is an Objective-C class from Sparkle framework.
-private class MockAppcastItem: SUAppcastItem {
-    init() {
-        // SUAppcastItem requires specific initialization
-        // For unit tests, we use a minimal mock that satisfies the protocol
-        super.init(dictionary: [:], failureReason: nil, relativeToURL: nil)
     }
 }

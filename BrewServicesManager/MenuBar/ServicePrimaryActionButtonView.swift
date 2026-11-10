@@ -1,30 +1,26 @@
 import SwiftUI
 
-// MARK: - Primary Action Button
-
+/// Start or stop button for a service row.
+///
+/// A single `Button` whose label, icon, and tint vary with the status, so SwiftUI keeps
+/// one view identity instead of swapping between two buttons.
 struct ServicePrimaryActionButtonView: View {
     let service: BrewServiceListEntry
     let onAction: (ServiceAction) -> Void
 
+    private var isActive: Bool {
+        service.status.isActive
+    }
+
     var body: some View {
-        if service.status.isActive {
-            Button("Stop", systemImage: "stop.fill") {
-                onAction(.stop(keepRegistered: false))
-            }
+        Button(isActive ? "Stop" : "Start", systemImage: isActive ? "stop.fill" : "play.fill", action: performPrimaryAction)
             .labelStyle(.iconOnly)
-            .font(.body)
-            .foregroundStyle(.red)
+            .foregroundStyle(isActive ? .red : .green)
             .buttonStyle(.plain)
-            .help("Stop")
-        } else {
-            Button("Start", systemImage: "play.fill") {
-                onAction(.start)
-            }
-            .labelStyle(.iconOnly)
-            .font(.body)
-            .foregroundStyle(.green)
-            .buttonStyle(.plain)
-            .help("Start")
-        }
+            .help(isActive ? "Stop" : "Start")
+    }
+
+    private func performPrimaryAction() {
+        onAction(isActive ? .stop(keepRegistered: false) : .start)
     }
 }

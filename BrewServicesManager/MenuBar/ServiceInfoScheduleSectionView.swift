@@ -11,11 +11,14 @@ struct ServiceInfoScheduleSectionView: View {
     var body: some View {
         PanelSectionCardView(title: "Schedule") {
             if let schedulable = info.schedulable {
-                InfoKeyValueRowView(label: "Schedulable", value: schedulable ? "Yes" : "No")
+                InfoKeyValueRowView(label: "Schedulable", value: Text(schedulable ? "Yes" : "No"))
             }
 
             if let interval = info.interval {
-                InfoKeyValueRowView(label: "Interval", value: "\(interval) seconds")
+                InfoKeyValueRowView(
+                    label: "Interval",
+                    value: Text(Duration.seconds(interval), format: .units(allowed: [.days, .hours, .minutes, .seconds], width: .wide))
+                )
             }
 
             if let cron = info.cron {

@@ -120,7 +120,7 @@ final class ServicesStore {
 
             if !current.force,
                let lastRefresh = lastRefreshByDomain[current.domain],
-               Date().timeIntervalSince(lastRefresh) < minimumRefreshInterval {
+               Date.now.timeIntervalSince(lastRefresh) < minimumRefreshInterval {
                 logger.debug("Refresh throttled")
                 nextRequest = pendingRefreshRequest
                 continue
@@ -152,7 +152,7 @@ final class ServicesStore {
                     debugMode: current.debugMode
                 )
 
-                let now = Date()
+                let now = Date.now
                 lastRefreshByDomain[domainForRefresh] = now
                 persistServicesCache(services: services, lastRefresh: now, domain: domainForRefresh)
 
@@ -330,7 +330,7 @@ final class ServicesStore {
         do {
             let services = try await client.listServices(domain: domain, sudoServiceUser: sudoServiceUser, debugMode: debugMode)
             state = .loaded(services)
-            let now = Date()
+            let now = Date.now
             lastRefresh = now
             lastRefreshByDomain[domain] = now
             persistServicesCache(services: services, lastRefresh: now, domain: domain)

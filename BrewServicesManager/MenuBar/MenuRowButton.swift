@@ -24,18 +24,21 @@ struct MenuRowButton: View {
     var body: some View {
         Button(action: action) {
             HStack {
-                Image(systemName: systemImage)
-                    .foregroundStyle(.secondary)
-                    .frame(width: LayoutConstants.menuRowIconWidth)
+                Label {
+                    Text(title)
+                } icon: {
+                    Image(systemName: systemImage)
+                        .foregroundStyle(.secondary)
+                        .frame(width: LayoutConstants.menuRowIconWidth)
+                }
 
-                Text(title)
-                
                 Spacer()
-                
+
                 if showDisclosure {
                     Image(systemName: "chevron.right")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.tertiary)
+                        .accessibilityHidden(true)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)

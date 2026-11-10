@@ -1,27 +1,20 @@
 //
-//  ConfirmationDialogModifier.swift
+//  GlobalActionType.swift
 //  BrewServicesManager
 //
 
 import SwiftUI
 
 /// Types of global actions that require confirmation.
-enum GlobalActionType: Identifiable {
+enum GlobalActionType: Hashable, Identifiable {
     case startAll
     case stopAll
     case restartAll
     case cleanup
-    
-    var id: String {
-        switch self {
-        case .startAll: "startAll"
-        case .stopAll: "stopAll"
-        case .restartAll: "restartAll"
-        case .cleanup: "cleanup"
-        }
-    }
-    
-    var title: String {
+
+    var id: Self { self }
+
+    var title: LocalizedStringResource {
         switch self {
         case .startAll: "Start All Services"
         case .stopAll: "Stop All Services"
@@ -30,7 +23,7 @@ enum GlobalActionType: Identifiable {
         }
     }
     
-    var message: String {
+    var message: LocalizedStringResource {
         switch self {
         case .startAll:
             "This will start all Homebrew services and register them to run at login."
@@ -43,7 +36,7 @@ enum GlobalActionType: Identifiable {
         }
     }
     
-    var confirmButtonTitle: String {
+    var confirmButtonTitle: LocalizedStringResource {
         switch self {
         case .startAll: "Start All"
         case .stopAll: "Stop All"

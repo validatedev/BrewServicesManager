@@ -12,7 +12,8 @@ struct HoverHighlightModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .background(isEnabled && isHovered ? Color.primary.opacity(0.08) : Color.clear)
+            // Keep one view identity and vary only the opacity, using a system hierarchical fill.
+            .background(.quinary.opacity(isEnabled && isHovered ? 1 : 0))
             .clipShape(.rect(cornerRadius: LayoutConstants.hoverCornerRadius))
             .onHover {
                 if isEnabled {
@@ -21,7 +22,7 @@ struct HoverHighlightModifier: ViewModifier {
                     isHovered = false
                 }
             }
-            .animation(.easeInOut(duration: 0.15), value: isHovered)
+            .animation(MotionConstants.hoverHighlight, value: isHovered)
     }
 }
 

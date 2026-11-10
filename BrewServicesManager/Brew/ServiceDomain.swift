@@ -14,7 +14,7 @@ nonisolated enum ServiceDomain: String, CaseIterable, Sendable {
     case system
     
     /// Human-readable label for display.
-    var label: String {
+    var label: LocalizedStringResource {
         switch self {
         case .user: "User"
         case .system: "System"
@@ -22,7 +22,7 @@ nonisolated enum ServiceDomain: String, CaseIterable, Sendable {
     }
     
     /// Description of what this domain means.
-    var description: String {
+    var description: LocalizedStringResource {
         switch self {
         case .user: "Services run as your user account"
         case .system: "Services run as root (requires admin)"

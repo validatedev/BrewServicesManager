@@ -63,9 +63,13 @@ final class AppUpdaterDelegate: NSObject, SPUStandardUserDriverDelegate {
         forUpdate update: SUAppcastItem,
         state: SPUUserUpdateState
     ) {
-        // Sparkle will handle showing this update (either modal or gentle reminder)
-        // If we're handling it as a gentle reminder, notify AppUpdater to show badge
-        if !handleShowingUpdate {
+        updateWillBeShown(handledBySparkle: handleShowingUpdate)
+    }
+
+    /// Notifies AppUpdater to show the badge when the update is left to us as a gentle reminder.
+    /// Separate from the delegate callback because `SPUUserUpdateState` cannot be constructed in tests.
+    func updateWillBeShown(handledBySparkle: Bool) {
+        if !handledBySparkle {
             onUpdateAvailabilityChanged?(true)
         }
     }

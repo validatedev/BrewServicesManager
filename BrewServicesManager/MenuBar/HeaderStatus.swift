@@ -59,7 +59,8 @@ enum HeaderStatus {
         }
     }
 
-    var foregroundStyle: Color {
+    /// Semantic color for the status icon; the title stays secondary.
+    var iconStyle: Color {
         switch self {
         case .ready:
             .green
@@ -73,23 +74,6 @@ enum HeaderStatus {
             .orange
         case .error:
             .red
-        }
-    }
-
-    var background: AnyShapeStyle {
-        switch self {
-        case .ready:
-            AnyShapeStyle(Color.green.opacity(LayoutConstants.headerStatusPillTintOpacity))
-        case .operating:
-            AnyShapeStyle(.thinMaterial)
-        case .refreshing:
-            AnyShapeStyle(.thinMaterial)
-        case .homebrewRequired:
-            AnyShapeStyle(Color.orange.opacity(LayoutConstants.headerStatusPillTintOpacity))
-        case .warning:
-            AnyShapeStyle(Color.orange.opacity(LayoutConstants.headerStatusPillTintOpacity))
-        case .error:
-            AnyShapeStyle(Color.red.opacity(LayoutConstants.headerStatusPillTintOpacity))
         }
     }
 }

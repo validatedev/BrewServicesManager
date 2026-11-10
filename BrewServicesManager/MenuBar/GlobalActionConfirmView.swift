@@ -7,12 +7,8 @@ struct GlobalActionConfirmView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: LayoutConstants.sectionSpacing) {
-            HStack(alignment: .firstTextBaseline) {
-                Label(action.title, systemImage: action.systemImage)
-                    .font(.headline)
-
-                Spacer()
-            }
+            Label(action.title, systemImage: action.systemImage)
+                .font(.headline)
 
             Text(action.message)
                 .foregroundStyle(.secondary)
@@ -20,14 +16,10 @@ struct GlobalActionConfirmView: View {
             HStack {
                 Spacer()
 
-                Button("Cancel", role: .cancel) {
-                    onCancel()
-                }
+                Button("Cancel", role: .cancel, action: onCancel)
                 .keyboardShortcut(.cancelAction)
 
-                Button(action.confirmButtonTitle, role: action == .cleanup ? .destructive : nil) {
-                    onConfirm()
-                }
+                Button(action.confirmButtonTitle, role: action == .cleanup ? .destructive : nil, action: onConfirm)
                 .keyboardShortcut(.defaultAction)
             }
         }

@@ -443,6 +443,7 @@
 				);
 				MARKETING_VERSION = 1.1.8;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.mertcandemir.BrewServicesManager;
+				PRODUCT_MODULE_NAME = BrewServicesManager;
 				PRODUCT_NAME = "Brew Services Manager";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -478,6 +479,7 @@
 				);
 				MARKETING_VERSION = 1.1.8;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.mertcandemir.BrewServicesManager;
+				PRODUCT_MODULE_NAME = BrewServicesManager;
 				PRODUCT_NAME = "Brew Services Manager";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

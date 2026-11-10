@@ -24,30 +24,10 @@ struct StatusIndicator: View {
         }
     }
 
-    private var glowColor: Color {
-        switch status {
-        case .started:
-            .green.opacity(0.6)
-        case .error:
-            .red.opacity(0.4)
-        default:
-            .clear
-        }
-    }
-
-    private var glowRadius: CGFloat {
-        switch status {
-        case .started, .error:
-            LayoutConstants.statusIndicatorGlowRadius
-        default:
-            0
-        }
-    }
-
     var body: some View {
         Image(systemName: status.symbolName)
             .foregroundStyle(color)
-            .shadow(color: glowColor, radius: glowRadius)
+            .accessibilityLabel(Text(status.displayName))
     }
 }
 

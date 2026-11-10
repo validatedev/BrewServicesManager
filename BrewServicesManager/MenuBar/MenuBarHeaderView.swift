@@ -5,7 +5,7 @@
 
 import SwiftUI
 
-/// Header section of the menu bar with gradient accent, title, status, and controls.
+/// Header section of the menu bar with the brand accent bar, title, status, and controls.
 struct MenuBarHeaderView: View {
     @Environment(AppSettings.self) private var settings
     
@@ -13,9 +13,9 @@ struct MenuBarHeaderView: View {
         @Bindable var settings = settings
 
         VStack(alignment: .leading, spacing: .zero) {
-            // Gradient accent bar
+            // Brand accent bar
             Rectangle()
-                .fill(.accentGradient)
+                .fill(.brand)
                 .frame(height: LayoutConstants.accentBarHeight)
             
             VStack(alignment: .leading) {

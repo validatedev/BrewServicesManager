@@ -13,7 +13,6 @@ struct MenuSectionLabel: View {
         Text(title)
             .font(.caption2.weight(.medium))
             .foregroundStyle(.secondary)
-            .textCase(.uppercase)
             .padding(.horizontal)
             .padding(.top, LayoutConstants.sectionLabelTopPadding)
             .padding(.bottom, LayoutConstants.sectionLabelBottomPadding)

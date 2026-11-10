@@ -22,7 +22,7 @@ struct ServiceInfoView: View {
 
     var body: some View {
         VStack(spacing: .zero) {
-            PanelHeaderView(title: serviceName, onBack: onDismiss)
+            PanelHeaderView(title: Text(serviceName), onBack: onDismiss)
 
             Divider()
 
@@ -69,13 +69,8 @@ struct ServiceInfoView: View {
                     .padding(.vertical, LayoutConstants.headerVerticalPadding)
                 }
             } else {
-                VStack {
-                    ProgressView()
-                    Text("Loading…")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                ProgressView("Loading…")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .task {
@@ -93,5 +88,5 @@ struct ServiceInfoView: View {
     ServiceInfoView(serviceName: "postgresql@16", onDismiss: { })
         .environment(ServicesStore())
         .environment(AppSettings())
-        .frame(width: LayoutConstants.serviceInfoMenuWidth)
+        .frame(width: LayoutConstants.serviceInfoMenuWidth, height: LayoutConstants.previewPanelHeight)
 }

@@ -1,29 +1,21 @@
 import SwiftUI
 
+/// Shown in place of the service list when loading services failed.
 struct ServiceErrorView: View {
     let error: AppError
     let copyDiagnostics: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: LayoutConstants.compactSpacing) {
-            Label("Error", systemImage: "exclamationmark.triangle.fill")
-                .foregroundStyle(.red)
-
+        ContentUnavailableView {
+            Label("Couldn't Load Services", systemImage: "exclamationmark.triangle.fill")
+        } description: {
             Text(error.localizedDescription)
-                .font(.caption)
-                .foregroundStyle(.secondary)
 
             if let suggestion = error.recoverySuggestion {
                 Text(suggestion)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
             }
-
-            Button("Copy Diagnostics", systemImage: "doc.on.doc") {
-                copyDiagnostics()
-            }
-            .font(.caption)
+        } actions: {
+            Button("Copy Diagnostics", systemImage: "doc.on.doc", action: copyDiagnostics)
         }
-        .padding()
     }
 }

@@ -29,17 +29,15 @@
 
 A macOS menu bar app for managing Homebrew services. Start, stop, and restart services without the terminal.
 
-### Key Features
+### Features
 
-- **Homebrew Integration** — Manage all `brew services` from the menu bar
-- **Real-time Status** — View service status at a glance
-- **Quick Actions** — Start, stop, and restart services instantly
-- **Port Detection** — Automatically detect and display listening ports for running services
-- **Service Links** — Configure custom URLs for quick access to service web interfaces
-- **System Domain Support** — Manage both user and system-level services with privilege escalation
-- **Launch at Login** — Optionally start the app automatically when you log in
-- **Auto-refresh** — Configurable refresh interval
-- **Debug Mode** — Verbose output for troubleshooting
+- Lists every `brew services` entry with its status, and refreshes on a schedule you choose
+- Start, stop, restart, run, or kill a service, or act on all of them at once
+- Shows the ports a running service listens on, including ports opened by its child processes
+- Saves links to a service's web interface, such as `http://localhost:8384` for Syncthing
+- Manages user services and system (root) services; system actions ask for your administrator password
+- Can launch at login and check for updates
+- Debug mode shows the full Homebrew output when something fails
 
 ---
 
@@ -97,38 +95,28 @@ brew install --cask validatedev/tap/brew-services-manager
 
 ### Getting Started
 
-1. **Launch the App** — Brew Services Manager runs as a menu bar-only application. Look for the mug icon (☕) in your menu bar.
-
-2. **View Services** — Click the menu bar icon to see all your Homebrew services and their current status.
-
-3. **Manage Services** — Hover over a service to reveal quick actions:
-   - **▶️ Start** — Start a stopped service
-   - **⏹️ Stop** — Stop a running service
-   - **🔄 Restart** — Restart a running service
-   - **ℹ️ Info** — View detailed service information
+1. Launch the app. It runs only in the menu bar, as a mug icon.
+2. Click the icon to see your Homebrew services and their status.
+3. Each service row has a **Start** or **Stop** button for the common case.
+4. The **More Actions** (⋯) button opens the rest: Run (one-shot), Start at Login, Restart, Stop with Options…, Kill, Manage Links…, View Info, Open in Finder, and Copy File Path.
 
 ### Port Detection
 
-BrewServicesManager automatically detects listening ports for running services:
+When you open **More Actions** or **View Info** for a running service, the app looks up the ports that the service and its child processes listen on. This covers services that spawn workers, such as Syncthing and nginx.
 
-- **Automatic Detection** — Ports are detected from the main process and all child processes
-- **Quick View** — See the first 3 ports in the service actions popover (e.g., "8384, 22000")
-- **Detailed View** — Click "View Info" to see all ports with protocol information (TCP/UDP)
-- **Works with Complex Services** — Detects ports from services that spawn worker processes (like Syncthing, nginx)
-
-Port detection happens automatically when you view service information. No configuration needed!
+- **More Actions** shows the first three ports, for example `8384, 22000`.
+- **View Info** lists every port with its protocol (TCP or UDP).
 
 ### Service Links
 
 Add custom URLs to quickly access service web interfaces:
 
-1. **Click the three-dots menu** on any service
-2. **Select "Manage Links..."** to open the link management interface
-3. **Add a link:**
-   - Click on an auto-suggested URL (based on detected ports), or
-   - Click "Add Custom Link" to enter any URL manually
-   - Optionally add a custom label (e.g., "Admin Panel", "Metrics")
-4. **Access your links** — They appear as clickable icons next to the service name
+1. Click **More Actions** (⋯) on a service and choose **Manage Links…**
+2. Add a link:
+   - Click a suggested URL (built from the detected ports), or
+   - Click **Add Custom Link** and enter any URL
+   - Optionally give it a label, such as "Admin Panel" or "Metrics"
+3. The first two links appear as buttons on the service row. All of them are listed under **More Actions**.
 
 **Examples:**
 - Syncthing → `http://localhost:8384` (Web UI)
@@ -146,26 +134,28 @@ Brew Services Manager supports two service domains:
 | **User** | Services running under your user account | Standard user permissions |
 | **System** | System-wide services (root-level) | Requires administrator password |
 
-Switch between domains in **Settings → Service Domain**.
+Switch domains with the selector in the menu header, or in **Settings → Domain**.
 
 
 ### Global Actions
 
 Perform bulk operations on all services:
 
-- **Start All** — Start all stopped services
-- **Stop All** — Stop all running services  
-- **Restart All** — Restart all services
+- **Start All**: start every service and register it to run at login
+- **Stop All**: stop every running service
+- **Restart All**: restart every service
+- **Cleanup**: remove unused service files
 
 ### Settings
 
-Access settings via the ⚙️ **Settings** menu item:
+Open **Settings…** from the menu:
 
-- **Service Domain** — Switch between User and System domains
-- **Sudo Service User** — Specify a user for sudo operations (system domain)
-- **Auto-refresh Interval** — Set how often to refresh the service list (0 = disabled)
-- **Debug Mode** — Enable verbose output for troubleshooting
-- **Launch at Login** — Automatically start the app when you log in to macOS
+- **Domain**: User or System
+- **Run system services as**: the user passed to `--sudo-service-user` for system services; leave it empty for root
+- **Auto-refresh**: Disabled, 30 seconds, 1 minute, or 5 minutes
+- **Launch at login**: start the app when you log in to macOS
+- **Automatically check for updates**, plus a **Check for Updates…** button
+- **Debug mode**: show detailed Homebrew output
 
 ---
 
@@ -230,7 +220,7 @@ Brew Services Manager searches for Homebrew in:
 <details>
 <summary><strong>Services show "Error" status</strong></summary>
 
-1. Open **Service Info** by clicking the ℹ️ button
+1. Open **More Actions** (⋯) on the service and choose **View Info**
 2. Check the error message and exit code
 3. Enable **Debug Mode** in Settings for verbose output
 4. Verify the service plist is valid:

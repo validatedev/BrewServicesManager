@@ -7,21 +7,20 @@ import SwiftUI
 
 /// Reusable header for overlay panels (Settings, Service Info, etc.)
 struct PanelHeaderView: View {
-    let title: String
+    /// Pass `Text("Key")` for localized titles, or `Text(variable)` for runtime values such as service names.
+    let title: Text
     let onBack: () -> Void
-    
+
     var body: some View {
         HStack {
-            Button("Back", systemImage: "chevron.left") {
-                onBack()
-            }
-            .labelStyle(.iconOnly)
-            .font(.body)
-            .buttonStyle(.plain)
-            
-            Text(title)
+            Button("Back", systemImage: "chevron.left", action: onBack)
+                .labelStyle(.iconOnly)
+                .buttonStyle(.plain)
+
+            title
                 .font(.headline)
-            
+                .lineLimit(1)
+
             Spacer()
         }
         .padding(.horizontal)
@@ -31,7 +30,7 @@ struct PanelHeaderView: View {
 
 #Preview {
     VStack(spacing: .zero) {
-        PanelHeaderView(title: "Settings") { }
+        PanelHeaderView(title: Text("Settings")) { }
         Divider()
         Spacer()
     }

@@ -5,8 +5,10 @@
 
 import SwiftUI
 
+/// Hosts the links list and the add/edit form for one service.
 struct ServiceLinksManagementView: View {
     @Environment(ServiceLinksStore.self) private var linksStore
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let serviceName: String
     let suggestedPorts: [ServicePort]
@@ -16,61 +18,50 @@ struct ServiceLinksManagementView: View {
 
     var body: some View {
         ZStack {
-            // Main list view
             ServiceLinksManagementListView(
                 serviceName: serviceName,
                 suggestedPorts: suggestedPorts,
                 onDismiss: onDismiss,
-                onAddLink: {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        route = .add
-                    }
-                },
-                onEditLink: { link in
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        route = .edit(link)
-                    }
-                }
+                onAddLink: { navigate(to: .add) },
+                onEditLink: { link in navigate(to: .edit(link)) }
             )
             .opacity(route == .list ? 1 : 0)
 
-            // Add link form overlay
-            if route == .add {
-                AddServiceLinkView(
-                    serviceName: serviceName,
+            switch route {
+            case .list:
+                EmptyView()
+
+            case .add:
+                ServiceLinkFormView(
+                    title: Text("Add Link to \(serviceName)"),
+                    confirmTitle: "Add",
                     onSave: { url, label in
                         linksStore.addLink(ServiceLink(url: url, label: label), to: serviceName)
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            route = .list
-                        }
+                        navigate(to: .list)
                     },
-                    onCancel: {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            route = .list
-                        }
-                    }
+                    onCancel: { navigate(to: .list) }
                 )
-                .transition(.move(edge: .trailing))
-            }
+                .transition(MotionConstants.panelEdgeTransition(reduceMotion: reduceMotion))
 
-            // Edit link form overlay
-            if case .edit(let link) = route {
-                EditServiceLinkView(
+            case .edit(let link):
+                ServiceLinkFormView(
+                    title: Text("Edit Link"),
+                    confirmTitle: "Save",
                     link: link,
                     onSave: { url, label in
                         linksStore.updateLink(link.id, in: serviceName, url: url, label: label)
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            route = .list
-                        }
+                        navigate(to: .list)
                     },
-                    onCancel: {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            route = .list
-                        }
-                    }
+                    onCancel: { navigate(to: .list) }
                 )
-                .transition(.move(edge: .trailing))
+                .transition(MotionConstants.panelEdgeTransition(reduceMotion: reduceMotion))
             }
+        }
+    }
+
+    private func navigate(to newRoute: ServiceLinksManagementRoute) {
+        withAnimation(MotionConstants.panelTransition) {
+            route = newRoute
         }
     }
 }

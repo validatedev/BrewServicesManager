@@ -10,6 +10,7 @@ import SwiftUI
 struct MenuBarRootView: View {
     @Environment(ServicesStore.self) private var store
     @Environment(AppSettings.self) private var settings
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var pendingGlobalAction: GlobalActionType?
     @State private var route: MenuBarRoute = .main
@@ -30,82 +31,40 @@ struct MenuBarRootView: View {
         }
     }
 
+    private var panelTransition: AnyTransition {
+        MotionConstants.panelEdgeTransition(reduceMotion: reduceMotion)
+    }
+
     var body: some View {
         ZStack {
-            // Main content
             MainMenuContentView(
-                onSettings: {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        route = .settings
-                    }
-                },
-                onServiceInfo: { service in
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        route = .serviceInfo(service.name)
-                    }
-                },
-                onStopWithOptions: { service in
-                    serviceToStop = service
-                },
-                onManageLinks: { service in
-                    Task {
-                        var ports: [ServicePort] = []
-
-                        if let info = store.selectedServiceInfo, info.name == service.name {
-                            ports = info.detectedPorts ?? []
-                        } else {
-                            await store.fetchServiceInfoWithPorts(
-                                service.name,
-                                domain: settings.selectedDomain,
-                                sudoServiceUser: settings.validatedSudoServiceUser,
-                                debugMode: settings.debugMode
-                            )
-                            ports = store.selectedServiceInfo?.detectedPorts ?? []
-                        }
-
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            route = .manageLinks(service: service.name, ports: ports)
-                        }
-                    }
-                },
-                onGlobalAction: { action in
-                    pendingGlobalAction = action
-                }
+                onSettings: { navigate(to: .settings) },
+                onServiceInfo: { service in navigate(to: .serviceInfo(service.name)) },
+                onStopWithOptions: { service in serviceToStop = service },
+                onManageLinks: showManageLinks,
+                onGlobalAction: { action in pendingGlobalAction = action }
             )
             .opacity(route == .main ? 1 : 0)
-            
-            // Settings overlay
-            if route == .settings {
-                SettingsView {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        route = .main
-                    }
-                }
-                .transition(.move(edge: .trailing))
-            }
-            
-            // Service Info overlay
-            if case .serviceInfo(let serviceName) = route {
-                ServiceInfoView(serviceName: serviceName) {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        route = .main
-                    }
-                }
-                .transition(.move(edge: .trailing))
-            }
 
-            // Service Links Management overlay
-            if case .manageLinks(let serviceName, let ports) = route {
+            switch route {
+            case .main:
+                EmptyView()
+
+            case .settings:
+                SettingsView(onDismiss: navigateToMain)
+                    .transition(panelTransition)
+
+            case .serviceInfo(let serviceName):
+                ServiceInfoView(serviceName: serviceName, onDismiss: navigateToMain)
+                    .transition(panelTransition)
+
+            case .manageLinks(let serviceName, let ports):
                 ServiceLinksManagementView(
                     serviceName: serviceName,
                     suggestedPorts: ports,
-                    onDismiss: {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            route = .main
-                        }
-                    }
+                    onDismiss: navigateToMain
                 )
-                .transition(.move(edge: .trailing))
+                .transition(panelTransition)
             }
         }
         .frame(width: menuContentWidth)
@@ -119,64 +78,82 @@ struct MenuBarRootView: View {
         }
         .overlay {
             if let service = serviceToStop {
-                Button {
-                    serviceToStop = nil
-                } label: {
-                    Color.black.opacity(0.3)
-                        .ignoresSafeArea()
+                MenuModalOverlay(onDismiss: { serviceToStop = nil }) {
+                    StopOptionsView(
+                        serviceName: service.displayName,
+                        onStop: { keepRegistered, waitBehavior in
+                            stop(service, keepRegistered: keepRegistered, waitBehavior: waitBehavior)
+                        },
+                        onCancel: { serviceToStop = nil }
+                    )
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Dismiss")
-                
-                StopOptionsView(
-                    serviceName: service.displayName,
-                    onStop: { keepRegistered, waitBehavior in
-                        serviceToStop = nil
-                        Task {
-                            await store.performAction(
-                                .stop(keepRegistered: keepRegistered, waitBehavior: waitBehavior),
-                                on: service,
-                                domain: settings.selectedDomain,
-                                sudoServiceUser: settings.validatedSudoServiceUser,
-                                debugMode: settings.debugMode
-                            )
-                        }
-                    },
-                    onCancel: {
-                        serviceToStop = nil
-                    }
-                )
-                .background(.regularMaterial)
-                .clipShape(.rect(cornerRadius: LayoutConstants.panelCornerRadius))
-                .shadow(radius: LayoutConstants.panelShadowRadius)
             }
 
             if let action = pendingGlobalAction {
-                Button {
-                    pendingGlobalAction = nil
-                } label: {
-                    Color.black.opacity(0.3)
-                        .ignoresSafeArea()
+                MenuModalOverlay(onDismiss: { pendingGlobalAction = nil }) {
+                    GlobalActionConfirmView(
+                        action: action,
+                        onConfirm: { confirmGlobalAction(action) },
+                        onCancel: { pendingGlobalAction = nil }
+                    )
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Dismiss")
-
-                GlobalActionConfirmView(
-                    action: action,
-                    onConfirm: {
-                        pendingGlobalAction = nil
-                        Task {
-                            await executeGlobalAction(action)
-                        }
-                    },
-                    onCancel: {
-                        pendingGlobalAction = nil
-                    }
-                )
-                .background(.regularMaterial)
-                .clipShape(.rect(cornerRadius: LayoutConstants.panelCornerRadius))
-                .shadow(radius: LayoutConstants.panelShadowRadius)
             }
+        }
+    }
+
+    // MARK: - Navigation
+
+    private func navigate(to newRoute: MenuBarRoute) {
+        withAnimation(MotionConstants.panelTransition) {
+            route = newRoute
+        }
+    }
+
+    private func navigateToMain() {
+        navigate(to: .main)
+    }
+
+    /// Loads detected ports (reusing cached info when it matches) before opening the links panel,
+    /// so the panel can offer suggestions immediately.
+    private func showManageLinks(for service: BrewServiceListEntry) {
+        Task {
+            var ports: [ServicePort] = []
+
+            if let info = store.selectedServiceInfo, info.name == service.name {
+                ports = info.detectedPorts ?? []
+            } else {
+                await store.fetchServiceInfoWithPorts(
+                    service.name,
+                    domain: settings.selectedDomain,
+                    sudoServiceUser: settings.validatedSudoServiceUser,
+                    debugMode: settings.debugMode
+                )
+                ports = store.selectedServiceInfo?.detectedPorts ?? []
+            }
+
+            navigate(to: .manageLinks(service: service.name, ports: ports))
+        }
+    }
+
+    // MARK: - Actions
+
+    private func stop(_ service: BrewServiceListEntry, keepRegistered: Bool, waitBehavior: StopWaitBehavior) {
+        serviceToStop = nil
+        Task {
+            await store.performAction(
+                .stop(keepRegistered: keepRegistered, waitBehavior: waitBehavior),
+                on: service,
+                domain: settings.selectedDomain,
+                sudoServiceUser: settings.validatedSudoServiceUser,
+                debugMode: settings.debugMode
+            )
+        }
+    }
+
+    private func confirmGlobalAction(_ action: GlobalActionType) {
+        pendingGlobalAction = nil
+        Task {
+            await executeGlobalAction(action)
         }
     }
 
@@ -195,8 +172,6 @@ struct MenuBarRootView: View {
         case .cleanup:
             await store.cleanup(domain: domain, sudoServiceUser: user, debugMode: debugMode)
         }
-
-        pendingGlobalAction = nil
     }
 }
 
@@ -204,4 +179,6 @@ struct MenuBarRootView: View {
     MenuBarRootView()
         .environment(ServicesStore())
         .environment(AppSettings())
+        .environment(ServiceLinksStore())
+        .environment(AppUpdater())
 }

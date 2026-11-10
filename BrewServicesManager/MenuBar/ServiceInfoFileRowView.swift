@@ -1,7 +1,8 @@
 import SwiftUI
 
+/// A file path row with reveal-in-Finder and copy buttons.
 struct ServiceInfoFileRowView: View {
-    let label: String
+    let label: LocalizedStringKey
     let path: String
     let url: URL?
 

@@ -25,21 +25,15 @@ struct ServiceLinkRow: View {
 
             Spacer()
 
-            Button("Open", systemImage: "arrow.up.forward.square") {
-                onOpen()
-            }
+            Button("Open", systemImage: "arrow.up.forward.square", action: onOpen)
             .labelStyle(.iconOnly)
             .buttonStyle(.borderless)
 
-            Button("Edit", systemImage: "pencil") {
-                onEdit()
-            }
+            Button("Edit", systemImage: "pencil", action: onEdit)
             .labelStyle(.iconOnly)
             .buttonStyle(.borderless)
 
-            Button("Delete", systemImage: "trash") {
-                onDelete()
-            }
+            Button("Delete", systemImage: "trash", action: onDelete)
             .labelStyle(.iconOnly)
             .buttonStyle(.borderless)
             .foregroundStyle(.red)

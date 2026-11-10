@@ -117,12 +117,12 @@ struct BrewServicesDecodingTests {
     }
     
     @Test func serviceStatusDisplayNames() {
-        #expect(BrewServiceStatus.started.displayName == "Running")
-        #expect(BrewServiceStatus.stopped.displayName == "Stopped")
-        #expect(BrewServiceStatus.scheduled.displayName == "Scheduled")
-        #expect(BrewServiceStatus.none.displayName == "Not Loaded")
-        #expect(BrewServiceStatus.error.displayName == "Error")
-        #expect(BrewServiceStatus.unknown.displayName == "Unknown")
+        #expect(String(localized: BrewServiceStatus.started.displayName) == "Running")
+        #expect(String(localized: BrewServiceStatus.stopped.displayName) == "Stopped")
+        #expect(String(localized: BrewServiceStatus.scheduled.displayName) == "Scheduled")
+        #expect(String(localized: BrewServiceStatus.none.displayName) == "Not Loaded")
+        #expect(String(localized: BrewServiceStatus.error.displayName) == "Error")
+        #expect(String(localized: BrewServiceStatus.unknown.displayName) == "Unknown")
     }
     
     // MARK: - ServiceAction Tests

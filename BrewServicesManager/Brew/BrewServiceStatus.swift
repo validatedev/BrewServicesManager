@@ -22,12 +22,12 @@ nonisolated enum BrewServiceStatus: String, Codable, Sendable {
     }
     
     /// A human-readable display name.
-    var displayName: String {
+    var displayName: LocalizedStringResource {
         switch self {
         case .started: "Running"
         case .stopped: "Stopped"
         case .scheduled: "Scheduled"
-        case .none: "Not Loaded"
+        case .none: "Not Loaded"  // launchd has no job loaded for this service
         case .error: "Error"
         case .unknown: "Unknown"
         }

@@ -13,13 +13,15 @@ struct ServiceMenuItemView: View {
     @Environment(\.openURL) private var openURL
 
     let service: BrewServiceListEntry
-    let onAction: (ServiceAction) -> Void
-    let onInfo: () -> Void
-    let onStopWithOptions: () -> Void
-    let onManageLinks: () -> Void
+    let onInfo: (BrewServiceListEntry) -> Void
+    let onStopWithOptions: (BrewServiceListEntry) -> Void
+    let onManageLinks: (BrewServiceListEntry) -> Void
 
     @State private var showingPopover = false
-    
+
+    /// Number of link buttons shown inline before collapsing into a "+N" count.
+    private static let inlineLinkLimit = 2
+
     private var operation: ServiceOperation? {
         store.serviceOperations[service.id]
     }
@@ -28,76 +30,74 @@ struct ServiceMenuItemView: View {
         operation?.status == .running
     }
 
-    private var serviceLinks: [ServiceLink] {
-        linksStore.links(for: service.name)
-    }
-
     var body: some View {
+        let serviceLinks = linksStore.links(for: service.name)
+
         HStack {
             StatusIndicator(status: service.status)
                 .frame(width: LayoutConstants.menuRowIconWidth)
-            
+
             Text(service.displayName)
                 .lineLimit(1)
 
             Spacer()
 
             if let operation {
-                switch operation.status {
-                case .idle, .succeeded:
-                    EmptyView()
-                case .running:
-                    ProgressView()
-                        .controlSize(.mini)
-                case .failed:
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .foregroundStyle(.orange)
-                }
+                ServiceOperationStatusIcon(status: operation.status)
             }
 
-            // Service links
-            if !serviceLinks.isEmpty {
-                ForEach(serviceLinks.prefix(2)) { link in
-                    Button("Open \(link.displayLabel)", systemImage: "link.circle") {
-                        openURL(link.url)
-                    }
-                    .labelStyle(.iconOnly)
-                    .buttonStyle(.plain)
-                    .foregroundStyle(.secondary)
-                    .help(link.displayLabel)
-                    .disabled(isOperationRunning)
+            ForEach(serviceLinks.prefix(Self.inlineLinkLimit)) { link in
+                Button("Open \(link.displayLabel)", systemImage: "link.circle") {
+                    openURL(link.url)
                 }
-
-                if serviceLinks.count > 2 {
-                    Text("+\(serviceLinks.count - 2)")
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
-                }
-            }
-
-            // Primary action button
-            ServicePrimaryActionButtonView(service: service, onAction: onAction)
+                .labelStyle(.iconOnly)
+                .buttonStyle(.plain)
+                .foregroundStyle(.secondary)
+                .help(link.displayLabel)
                 .disabled(isOperationRunning)
-            
-            // More options button with popover
-            Button("More", systemImage: "ellipsis.circle") {
-                showingPopover.toggle()
             }
-            .labelStyle(.iconOnly)
-            .font(.body)
-            .foregroundStyle(.secondary)
-            .buttonStyle(.plain)
-            .disabled(isOperationRunning)
-            .popover(isPresented: $showingPopover, arrowEdge: .trailing) {
-                ServiceActionsPopoverView(
-                    service: service,
-                    onAction: onAction,
-                    onInfo: onInfo,
-                    onStopWithOptions: onStopWithOptions,
-                    onManageLinks: onManageLinks,
-                    isPresented: $showingPopover
-                )
+
+            if serviceLinks.count > Self.inlineLinkLimit {
+                Text("+\(serviceLinks.count - Self.inlineLinkLimit)")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+                    .accessibilityLabel("\(serviceLinks.count - Self.inlineLinkLimit) more links")
             }
+
+            ServicePrimaryActionButtonView(service: service, onAction: perform)
+                .disabled(isOperationRunning)
+
+            Button("More Actions", systemImage: "ellipsis.circle", action: togglePopover)
+                .labelStyle(.iconOnly)
+                .foregroundStyle(.secondary)
+                .buttonStyle(.plain)
+                .disabled(isOperationRunning)
+                .popover(isPresented: $showingPopover, arrowEdge: .trailing) {
+                    ServiceActionsPopoverView(
+                        service: service,
+                        onAction: perform,
+                        onInfo: { onInfo(service) },
+                        onStopWithOptions: { onStopWithOptions(service) },
+                        onManageLinks: { onManageLinks(service) },
+                        isPresented: $showingPopover
+                    )
+                }
+        }
+    }
+
+    private func togglePopover() {
+        showingPopover.toggle()
+    }
+
+    private func perform(_ action: ServiceAction) {
+        Task {
+            await store.performAction(
+                action,
+                on: service,
+                domain: settings.selectedDomain,
+                sudoServiceUser: settings.validatedSudoServiceUser,
+                debugMode: settings.debugMode
+            )
         }
     }
 }
