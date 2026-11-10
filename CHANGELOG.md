@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Section cards on macOS 26 no longer render as clipped pill shapes (#6)
 - Link URLs pasted with surrounding spaces are accepted instead of rejected
 - Unit tests build again after the app rename
+- Homebrew cask uses `depends_on macos: :sequoia`, which removes the `brew doctor` deprecation warning (#7)
 
 ## [1.1.8] - 2026-02-10
 
